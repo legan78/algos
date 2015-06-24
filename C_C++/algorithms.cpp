@@ -10,8 +10,7 @@
 
 
 void help(){
-    std::cout << "Input format: ./app < range_lower_limit > < range_upper_limit > < sample_size > < order >"
-              << std::endl;
+    std::cout<<"Input format: ./app < range_lower_limit > < range_upper_limit > < sample_size > < order >"<< std::endl;
 }
 
 
@@ -84,6 +83,8 @@ int main(int argv, char** argc){
     std::cout << "The list:" << list << std::endl;
     std::cout << "The number of inversions is: " << algos::apps::max_sub_array<unsigned int>(list,low,high) << std::endl;
     
+    algos::apps::max_sub_array(list, low , high);
   
     return EXIT_SUCCESS;
 }
+
