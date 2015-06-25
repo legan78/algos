@@ -99,8 +99,68 @@
 
 
 \section[\scshape Paradigm]{\scshape Paradigm}
-\begin{frame}[allowframebreaks]{A Programming Paradigm}
+\begin{frame}[allowframebreaks]{The Paradigm}
 \topline
+
+This paradigm solves a problem \textbf{recursively} applying three steps at each level of the recursion
+
+\begin{itemize}
+    \item \textbf{DIVIDE} the problem into a smaller sub-problems.
+    \item \textbf{CONQUER} via recursive calls.
+    \item \textbf{COMBINE} solutions of sub-problems into one of the original problem.
+\end{itemize}
+
+Consider also a \textbf{base case} for small enough sub-problems.
+
+\framebreak
+\topline
+
+{\scshape\Large Insights and Hints}
+
+\begin{itemize}
+    \item Sub-problems can be any size: $1/2$, $1/3$, etc.
+    \item Generally, third step is the key to achieve good performance.
+    \item Base case is often too ingénue.
+\end{itemize}
+
+\framebreak
+\topline
+
+
+{\scshape\Large Merge sort (retake) }
+
+\begin{minipage}{5cm}
+
+\captionof*{algorithm}{}{{\scshape merge-sort}($A, p, r$)}
+\begin{algorithmic}[1]
+\IF{$p<r$}
+	\STATE $q = \floor*{(p+r)/2}$
+	\STATE {\scshape merge-sort}($A, p, q$)
+	\STATE {\scshape merge-sort}($A, q, r$)
+	\STATE {\scshape merge}($A, p, q, r$)
+\ENDIF
+\end{algorithmic}
+
+\end{minipage}\ \ 
+\begin{minipage}{5cm}
+
+\captionof*{algorithm}{}{{\scshape merge}($A, p, q, r$)}
+\begin{algorithmic}[1]
+\STATE $B=1^{st}$ part of array.
+\STATE $C=2^{nd}$ part of array.
+\STATE $i=1,j=1$
+\FOR{$k=1$ to $n$}
+	\IF{$B[i]<C[j]$}
+		\STATE $A[k]=B[i++]$
+%		\STATE $i++$
+	\ELSE
+		\STATE $A[k]=C[j++]$
+%		\STATE $j++$
+	\ENDIF
+\ENDFOR
+\end{algorithmic}
+
+\end{minipage}
 
 
 
@@ -128,11 +188,27 @@
 \end{frame}
 
 
+\section[\scshape Recurrence Tree]{\scshape Recurrence Tree}
+\begin{frame}{Recurrence Tree}
+\topline
+
+{\scshape\Large Merge sort recursion tree}
+
+\begin{figure}
+	\begin{center}
+		\includegraphics[width=8cm]{Figures/mergeSortTree.png}
+	\end{center}
+\end{figure}
+
+At each level $j=0,1,...,log_2(n)$, there are $2^j$ subproblems of size $n/2^j$.
+
+\end{frame}
+
 \section[\scshape Master Method]{\scshape Master Method}
 \begin{frame}[allowframebreaks]{The Master Method}
 \topline
 
-A black box
+{\scshape\Large A black box }
 
 \end{frame}
 
