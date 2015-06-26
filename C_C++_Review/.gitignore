@@ -1,0 +1,9 @@
+# These are the extentions genereted by tex compilation
+*.log
+*.aux
+*.nav
+*.out
+*.snm
+*.gz
+*.toc
+*.vrb

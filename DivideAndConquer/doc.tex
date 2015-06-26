@@ -1,0 +1,139 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%  This Beamer template was created by Cameron Bracken.
+%%  Anyone can freely use or modify it for any purpose
+%%  without attribution.
+%%
+%%  Last Modified: January 9, 2009
+%%
+
+\documentclass[xcolor=x11names,compress, graphics]{beamer}
+
+%% General document %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{decorations.fractals}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{movie15}
+\usepackage{float}
+\usepackage{subfig}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{mathrsfs}
+\usepackage{mathtools}
+
+\usepackage{algorithm, algorithmic}
+
+%% Beamer Layout %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\useoutertheme[subsection=false,shadow]{miniframes}
+\useinnertheme{default}
+\usefonttheme{serif}
+\usepackage{palatino}
+
+\setbeamerfont{title like}{shape=\scshape}
+\setbeamerfont{frametitle}{shape=\scshape}
+
+\setbeamercolor*{lower separation line head}{bg=DeepSkyBlue4} 
+\setbeamercolor*{normal text}{fg=black,bg=white} 
+\setbeamercolor*{alerted text}{fg=red} 
+\setbeamercolor*{example text}{fg=black} 
+\setbeamercolor*{structure}{fg=black} 
+ 
+\setbeamercolor*{palette tertiary}{fg=black,bg=black!10} 
+\setbeamercolor*{palette secondary}{fg=black,bg=black!10}
+\setbeamercolor*{palette quaternary}{fg=black,bg=black!10} 
+
+%% Set the background and font color of the blocks 
+\setbeamercolor{block title}{bg=DeepSkyBlue4,fg=white}
+
+%% Set the type of the blocks
+\setbeamertemplate{blocks}[shadow=true]
+
+\newcommand{\topline}{%
+  \tikz[remember picture,overlay] {%
+    \draw[DeepSkyBlue4] ([yshift=-1.5cm, xshift = 1cm]current page.north west)
+             -- ([yshift=-1.5cm,xshift=\paperwidth-1cm]current page.north west);}}
+             
+\setbeamertemplate{section in toc}[sections numbered]           
+
+\renewcommand{\(}{\begin{columns}}
+\renewcommand{\)}{\end{columns}}
+\newcommand{\<}[1]{\begin{column}{#1}}
+\renewcommand{\>}{\end{column}}
+
+\usepackage[skip=10pt,font=scriptsize]{caption}
+\captionsetup[figure]{labelformat=empty}
+
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+\makeatother
+\setbeamertemplate{footline}
+{
+  \leavevmode%
+  \hbox{%
+  \begin{beamercolorbox}[wd=.4\paperwidth,ht=2.25ex,dp=1ex,center]{author in head/foot}%
+    \usebeamerfont{author in head/foot}\insertshortauthor
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.6\paperwidth,ht=2.25ex,dp=1ex,center]{title in head/foot}%
+    \usebeamerfont{title in head/foot}\insertshorttitle\hspace*{3em}
+    \insertframenumber{} / \inserttotalframenumber\hspace*{1ex}
+  \end{beamercolorbox}}%
+  \vskip0pt%
+}
+\makeatletter
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{\scshape \textbf{Divide And Conquer Paradigm}}
+\author{\scriptsize\scshape Angel No\'e Mart\'inez Gonz\'alez}
+
+
+\begin{document}
+
+% The title page
+\begin{frame}
+\setcounter{framenumber}{1}
+\titlepage
+\scriptsize
+
+\end{frame}
+%===============
+
+
+\section[\scshape Paradigm]{\scshape Paradigm}
+\begin{frame}[allowframebreaks]{A Programming Paradigm}
+\topline
+
+
+
+\end{frame}
+
+\section[\scshape Counting Inversions]{\scshape Counting Inversions}
+\begin{frame}[allowframebreaks]{Counting Inversions}
+\topline
+
+
+\end{frame}
+
+\section[\scshape The Maximum Subarray]{\scshape The Maximum Subarray}
+\begin{frame}[allowframebreaks]{The Maximum Subarray}
+\topline
+
+
+\end{frame}
+
+\section[\scshape Binary Search]{\scshape Binary Search}
+\begin{frame}[allowframebreaks]{Binary Search}
+\topline
+
+
+\end{frame}
+
+
+\section[\scshape Master Method]{\scshape Master Method}
+\begin{frame}[allowframebreaks]{The Master Method}
+\topline
+
+A black box
+
+\end{frame}
+
+\end{document}
