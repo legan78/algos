@@ -65,7 +65,7 @@ namespace algos{
      * @BEST_CASE:      O( nlog2(n) )
      * @AVERAGE_CASE:   O( nlog2(n) )                
      */
-     class merge_sort{
+     class merge_sort {
        public:
          /**
           * @brief Call this method through the scope to sort the 
@@ -96,6 +96,29 @@ namespace algos{
        static void merge( std::vector<T>& array, unsigned int begin, 
                           unsigned int middle, unsigned int end );
     };
+
+     class quick_sort {
+     public:
+       template<typename T>
+	 static void sort(std::vector<T>& _array, int order = SORT_ALGOS_INCREASING);
+       
+     protected:
+       quick_sort();
+       quick_sort(const quick_sort& other);
+       quick_sort& operator=(const quick_sort& other);
+
+       template<typename T>
+	 static void sort_array(std::vector<T>& _array, );
+       
+       template<typename T>
+	 static void pivot_partition(std::vector<T>& _array, unsinged int pivot);
+
+       template<typename T>
+	 static unsigned int get_pivot(std::vector<T>& _array);
+       
+
+     };
+
   }
 }
 #endif
