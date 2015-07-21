@@ -149,27 +149,45 @@ namespace algos{
     }     
 
      template<typename T>
-     void quick_sort::sort(const std::vector<T>&, int order = SORT_ALGOS_INCREASING) {
+     void quick_sort::sort(const std::vector<T>& array
+			   , int order = SORT_ALGOS_INCREASING) {
      
+       unsigned int l = 0;
+       unsigned int r = array.size()-1;
+
+       
+
      }
 
      template<typename T>
-     void quick_sort::sort_array(std::vector<T>& _array, ) {
+       void quick_sort::sort_array(std::vector<T>& _array, unsigned int l, unsignd int r) {
        
-       if( _array.size() == 1) return;
-       
-       unsigned int pivot = get_pivot(_array);
+       if( l == r) return;
        pivot_partition(_array, pivot);
+       sort_array(
      }
        
      template<typename T>
-     void quick_sort::pivot_partition(std::vector<T>& _array, unsigned int pivot) {
+       void quick_sort::pivot_partition(std::vector<T>& _array
+					, unsigned int p
+					, unsigned int l
+					, unsigned int r ) {
+       unsigned int i = l+1;
+
+       for(unsigned int j=l+1; j<r; j++)
+	 if(_array[p] < _array[j]) {
+	   std::swap<T>(_array[j], _array[i]);			
+	   i++;
+	 }
+
+       std::swap(_array[p], array[i-1]);
        
+       return i-1;
      }
 
      template<typename T>
      unsigned int quick_sort::get_pivot(std::vector<T>& _array) {
-
+       return _array[0];
      }
        
 

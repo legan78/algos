@@ -108,11 +108,15 @@ namespace algos{
        quick_sort& operator=(const quick_sort& other);
 
        template<typename T>
-	 static void sort_array(std::vector<T>& _array, );
+	 static void sort_array(std::vector<T>& _array, unsigned int l, unsigned int r);
        
        template<typename T>
 	 static void pivot_partition(std::vector<T>& _array, unsinged int pivot);
-
+     template<typename T>
+       void quick_sort::pivot_partition(std::vector<T>& _array
+					, unsigned int p
+					, unsigned int l
+					, unsigned int r );
        template<typename T>
 	 static unsigned int get_pivot(std::vector<T>& _array);
        
