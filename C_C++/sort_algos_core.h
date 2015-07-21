@@ -147,6 +147,32 @@ namespace algos{
        
        for( ; j < rightSize && k < end; j++, k++) array[k] = right[j];
     }     
+
+     template<typename T>
+     void quick_sort::sort(const std::vector<T>&, int order = SORT_ALGOS_INCREASING) {
+     
+     }
+
+     template<typename T>
+     void quick_sort::sort_array(std::vector<T>& _array, ) {
+       
+       if( _array.size() == 1) return;
+       
+       unsigned int pivot = get_pivot(_array);
+       pivot_partition(_array, pivot);
+     }
+       
+     template<typename T>
+     void quick_sort::pivot_partition(std::vector<T>& _array, unsigned int pivot) {
+       
+     }
+
+     template<typename T>
+     unsigned int quick_sort::get_pivot(std::vector<T>& _array) {
+
+     }
+       
+
   }
 }
 
