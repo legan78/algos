@@ -98,28 +98,31 @@ namespace algos{
     };
 
      class quick_sort {
-     public:
+       public:
        template<typename T>
 	 static void sort(std::vector<T>& _array, int order = SORT_ALGOS_INCREASING);
        
-     protected:
+       protected:
+
        quick_sort();
        quick_sort(const quick_sort& other);
        quick_sort& operator=(const quick_sort& other);
 
        template<typename T>
-	 static void sort_array(std::vector<T>& _array, unsigned int l, unsigned int r);
+	 static void sort_array(std::vector<T>& _array
+				, unsigned int l
+				, unsigned int r);
        
        template<typename T>
-	 static void pivot_partition(std::vector<T>& _array, unsinged int pivot);
-     template<typename T>
-       void quick_sort::pivot_partition(std::vector<T>& _array
-					, unsigned int p
-					, unsigned int l
-					, unsigned int r );
+	 static unsigned int pivot_partition(std::vector<T>& _array
+					     , unsigned int p
+					     , unsigned int l
+					     , unsigned int r );
+
        template<typename T>
-	 static unsigned int get_pivot(std::vector<T>& _array);
-       
+	 static unsigned int get_pivot(std::vector<T>& _array
+				       ,unsigned int l
+				       ,unsigned int r);
 
      };
 

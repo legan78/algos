@@ -149,47 +149,86 @@ namespace algos{
     }     
 
      template<typename T>
-     void quick_sort::sort(const std::vector<T>& array
-			   , int order = SORT_ALGOS_INCREASING) {
+     void quick_sort::sort(std::vector<T>& array, int order ) {
      
        unsigned int l = 0;
-       unsigned int r = array.size()-1;
+       unsigned int r = array.size();
 
-       
-
+       sort_array(array, l, r);
      }
 
      template<typename T>
-       void quick_sort::sort_array(std::vector<T>& _array, unsigned int l, unsignd int r) {
-       
+       void quick_sort::sort_array(std::vector<T>& _array
+				   , unsigned int l
+				   , unsigned int r) {
        if( l == r) return;
-       pivot_partition(_array, pivot);
-       sort_array(
+
+#ifdef DEBUG_VERSION
+       std::cout << "Partitioned array 1: "
+		 << std::vector<unsigned int>(_array.begin()+l, _array.begin()+r) 
+		 << std::endl;
+#endif
+
+       unsigned int p = get_pivot(_array, l, r);
+       p = pivot_partition(_array, p, l, r);
+
+#ifdef DEBUG_VERSION
+       std::cout << "Partitioned array 2: "
+		 << std::vector<unsigned int>(_array.begin()+l, _array.begin()+r) 
+		 << std::endl;
+#endif
+
+       if(l != p) sort_array(_array, l, p-1);
+       if(p != r) sort_array(_array, p, r);
      }
        
      template<typename T>
-       void quick_sort::pivot_partition(std::vector<T>& _array
-					, unsigned int p
-					, unsigned int l
-					, unsigned int r ) {
+       unsigned int quick_sort::pivot_partition(std::vector<T>& _array
+						, unsigned int p
+						, unsigned int l
+						, unsigned int r ) {
        unsigned int i = l+1;
 
-       for(unsigned int j=l+1; j<r; j++)
-	 if(_array[p] < _array[j]) {
+       for(unsigned int j=l+1; j<r; j++) {
+
+#ifdef DEBUG_VERSION
+	 std::cout << "Comparing "
+		   << _array[p]
+		   << " : " 
+		   << _array[j];
+#endif
+
+	 if(_array[p] > _array[j]) {
 	   std::swap<T>(_array[j], _array[i]);			
 	   i++;
+
+#ifdef DEBUG_VERSION
+	   std::cout << " Swaping! ";
+#endif
+
 	 }
 
-       std::swap(_array[p], array[i-1]);
+#ifdef DEBUG_VERSION
+	 std::cout << std::endl;
+	 getchar();
+#endif
+
+       }
+
+       std::swap(_array[p], _array[i-1]);
        
-       return i-1;
+       return i;
      }
 
      template<typename T>
-     unsigned int quick_sort::get_pivot(std::vector<T>& _array) {
-       return _array[0];
-     }
+     unsigned int quick_sort::get_pivot(std::vector<T>& _array
+					,unsigned int l
+					,unsigned int r) {
        
+
+       //       std::swap(_array[l], _array[r-1]);
+       return l;
+     }
 
   }
 }
