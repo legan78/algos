@@ -3,6 +3,8 @@
 
 #include "sort_algos.h"
 
+//#define DEBUG_VERSION
+
 namespace algos{
   namespace sorting_algos {
 
@@ -148,6 +150,8 @@ namespace algos{
        for( ; j < rightSize && k < end; j++, k++) array[k] = right[j];
     }     
 
+
+     unsigned int quick_sort::compCount = 0;
      template<typename T>
      void quick_sort::sort(std::vector<T>& array, int order ) {
      
@@ -178,8 +182,24 @@ namespace algos{
 		 << std::endl;
 #endif
 
-       if(l != p) sort_array(_array, l, p-1);
-       if(p != r) sort_array(_array, p, r);
+#ifdef DEBUG_VERSION
+       std::cout << std::vector<unsigned int>(_array.begin()+l, _array.begin()+p-1)
+		 << "Array Size left: " 
+		 << p-1-l
+		 << std::endl;
+#endif
+
+       compCount += (int(p-1-l-1) < 0)?0:p-1-l-1;
+       sort_array(_array, l, p-1);
+
+#ifdef DEBUG_VERSION
+       std::cout << std::vector<unsigned int>(_array.begin()+p, _array.begin()+r)
+		 << "Array Size right: " 
+		 << r-p<< std::endl;
+#endif
+
+       compCount += (int(r-p-1) < 0)?0:r-p-1;
+       sort_array(_array, p, r);
      }
        
      template<typename T>
@@ -216,7 +236,7 @@ namespace algos{
        }
 
        std::swap(_array[p], _array[i-1]);
-       
+
        return i;
      }
 
@@ -226,10 +246,31 @@ namespace algos{
 					,unsigned int r) {
        
 
-       //       std::swap(_array[l], _array[r-1]);
+       // std::swap(_array[l], _array[r-1]); // Last element
+       median_of_three(array, l, r);
+
        return l;
      }
 
+     template<typename T>
+       unsigned int median_of_three(const std::vector<T>& _array
+				    ,unsigned int l
+				    ,unsigned int r) {
+       unsigned int size = r-l;
+       unsigned int m = std::floor(size/2) + (size % 2 == 0)? 0 : 1;
+       unsigned int _m;
+
+       if( (_array[l] < _array[m] && _array[m] < _array[r]) ||
+	   (_array[r] < _array[m] && _array[m] < _array[l]) )
+	 _m = m;
+       else if( (_array[m] < _array[l] && _array[l] < _array[r]) ||
+		(_array[r] < _array[l] && _array[l] < _array[m]) )
+	 _m = l;
+       else
+	 _m = r;
+
+       return _m;
+     }
   }
 }
 

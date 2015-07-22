@@ -102,6 +102,8 @@ namespace algos{
        template<typename T>
 	 static void sort(std::vector<T>& _array, int order = SORT_ALGOS_INCREASING);
        
+       static unsigned int compCount;
+
        protected:
 
        quick_sort();
@@ -123,6 +125,11 @@ namespace algos{
 	 static unsigned int get_pivot(std::vector<T>& _array
 				       ,unsigned int l
 				       ,unsigned int r);
+
+       template<typename T>
+	 static unsigned int median_of_three(const std::vector<T>& _array
+					     ,unsigned int l
+					     ,unsigned int r);
 
      };
 

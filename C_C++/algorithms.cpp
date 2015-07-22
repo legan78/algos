@@ -58,7 +58,7 @@ int main(int argv, char** argc){
  
     /// Checking for valid inputs
 
-
+  /*
     unsigned int sampleSize = (unsigned int) atoi(argc[3]);
     int lowerLimit          = atoi(argc[1]);
     int upperLimit          = atoi(argc[2]);
@@ -73,9 +73,10 @@ int main(int argv, char** argc){
     /// Fill data 
     for( unsigned int i = 0 ; i < sampleSize; i++)
         array[i] = U( generator );
-    
+*/    
 
-    //std::vector<unsigned int> array = load_file<unsigned int>(argc[1]);
+
+    std::vector<unsigned int> array = load_file<unsigned int>(argc[1]);
 
     // show initial array
     std::cout << "Initial array: "
@@ -91,6 +92,11 @@ int main(int argv, char** argc){
     std::cout << "Final array: "
               << array 
               << std::endl;
+
+    std::cout << "N. of comparisons: " 
+	      << algos::sorting_algos::quick_sort::compCount
+	      << std::endl;
+
     /*
     std::cout << "The number of inversions is: "
               << algos::apps::count_inversions<unsigned int>(array) 
