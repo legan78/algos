@@ -249,7 +249,7 @@ namespace algos{
        // std::swap(_array[l], _array[r-1]); // Last element
        median_of_three(array, l, r);
 
-       return l;
+       return median_of_three(array, l, r);
      }
 
      template<typename T>
