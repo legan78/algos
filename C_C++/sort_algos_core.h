@@ -3,7 +3,7 @@
 
 #include "sort_algos.h"
 
-//#define DEBUG_VERSION
+#define DEBUG_VERSION
 
 namespace algos{
   namespace sorting_algos {
@@ -152,6 +152,8 @@ namespace algos{
 
 
      unsigned int quick_sort::compCount = 0;
+     int quick_sort::pivotType = 0;
+
      template<typename T>
      void quick_sort::sort(std::vector<T>& array, int order ) {
      
@@ -167,38 +169,59 @@ namespace algos{
 				   , unsigned int r) {
        if( l == r) return;
 
+       compCount += (int(r-l-1 ) < 0)?0:r-l-1;
+
 #ifdef DEBUG_VERSION
-       std::cout << "Partitioned array 1: "
+       std::cout << "Before partition: "
 		 << std::vector<unsigned int>(_array.begin()+l, _array.begin()+r) 
 		 << std::endl;
+
+       std::cout << "Array size :"
+		 << r-l
+	         << " summing: "
+		 << r-l-1
+		 << std::endl;
+
 #endif
 
        unsigned int p = get_pivot(_array, l, r);
+
+#ifdef DEBUG_VERSION
+       std::cout << "Pivot: "
+		 << _array[p]
+		 << std::endl;
+#endif
+
        p = pivot_partition(_array, p, l, r);
 
 #ifdef DEBUG_VERSION
-       std::cout << "Partitioned array 2: "
+       std::cout << "After partition: "
 		 << std::vector<unsigned int>(_array.begin()+l, _array.begin()+r) 
 		 << std::endl;
 #endif
 
-#ifdef DEBUG_VERSION
+       /*#ifdef DEBUG_VERSION
        std::cout << std::vector<unsigned int>(_array.begin()+l, _array.begin()+p-1)
 		 << "Array Size left: " 
 		 << p-1-l
+		 << " Summing: "
+		 << int(p-1-l-1)
 		 << std::endl;
-#endif
+		 #endif*/
 
-       compCount += (int(p-1-l-1) < 0)?0:p-1-l-1;
+       //       compCount += (int(p-1-l-1) < 0)?0:p-1-l;
        sort_array(_array, l, p-1);
 
-#ifdef DEBUG_VERSION
+       /*#ifdef DEBUG_VERSION
        std::cout << std::vector<unsigned int>(_array.begin()+p, _array.begin()+r)
 		 << "Array Size right: " 
-		 << r-p<< std::endl;
-#endif
+		 << r-p
+	 	 << " Summing: "
+		 << int(r-p-1)
+		 << std::endl;
+		 #endif*/
 
-       compCount += (int(r-p-1) < 0)?0:r-p-1;
+       //       compCount += (int(r-p-1) < 0)?0:r-p;
        sort_array(_array, p, r);
      }
        
@@ -211,27 +234,27 @@ namespace algos{
 
        for(unsigned int j=l+1; j<r; j++) {
 
-#ifdef DEBUG_VERSION
+	 /*#ifdef DEBUG_VERSION
 	 std::cout << "Comparing "
 		   << _array[p]
 		   << " : " 
 		   << _array[j];
-#endif
+		   #endif*/
 
 	 if(_array[p] > _array[j]) {
 	   std::swap<T>(_array[j], _array[i]);			
 	   i++;
 
-#ifdef DEBUG_VERSION
+	   /*#ifdef DEBUG_VERSION
 	   std::cout << " Swaping! ";
-#endif
+	   #endif*/
 
 	 }
 
-#ifdef DEBUG_VERSION
+	 /*#ifdef DEBUG_VERSION
 	 std::cout << std::endl;
 	 getchar();
-#endif
+	 #endif*/
 
        }
 
@@ -245,29 +268,49 @@ namespace algos{
 					,unsigned int l
 					,unsigned int r) {
        
+       switch(pivotType) {
+       case 1:
+	 std::swap(_array[l], _array[r-1]); // Last element
+	 break;
+       case 2: {
+	 unsigned int m = median_of_three(_array, l, r);
+	 std::swap(_array[l], _array[m]);
+	 break;
+       }
+       default:
+	 break;
+       }
+       // 
 
-       // std::swap(_array[l], _array[r-1]); // Last element
-       median_of_three(array, l, r);
-
-       return median_of_three(array, l, r);
+       return l;
      }
 
      template<typename T>
-       unsigned int median_of_three(const std::vector<T>& _array
+       unsigned int quick_sort::median_of_three(const std::vector<T>& _array
 				    ,unsigned int l
 				    ,unsigned int r) {
        unsigned int size = r-l;
-       unsigned int m = std::floor(size/2) + (size % 2 == 0)? 0 : 1;
+       unsigned int m = size/2+l;
        unsigned int _m;
 
-       if( (_array[l] < _array[m] && _array[m] < _array[r]) ||
-	   (_array[r] < _array[m] && _array[m] < _array[l]) )
-	 _m = m;
-       else if( (_array[m] < _array[l] && _array[l] < _array[r]) ||
-		(_array[r] < _array[l] && _array[l] < _array[m]) )
+#ifdef DEBUG_VERSION
+       std::cout << "We consider : " 
+		 << _array[l]
+		 << " and "
+		 << _array[m]
+		 << " and "
+		 << _array[r-1]
+		 << std::endl;
+#endif
+       if( ( _array[l] < _array[m] && _array[m] < _array[r-1] ) ||
+	   ( _array[r-1] < _array[m] && _array[m] < _array[l] ) )
+	   _m = m;
+       else if( ( _array[m] < _array[l] && _array[l] < _array[r-1] ) ||
+		( _array[r-1] < _array[l] && _array[l] < _array[m] ) )
 	 _m = l;
        else
-	 _m = r;
+	 _m = r-1;
+
 
        return _m;
      }

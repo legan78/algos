@@ -104,6 +104,8 @@ namespace algos{
        
        static unsigned int compCount;
 
+       static int pivotType;
+
        protected:
 
        quick_sort();

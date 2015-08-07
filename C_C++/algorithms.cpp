@@ -73,10 +73,11 @@ int main(int argv, char** argc){
     /// Fill data 
     for( unsigned int i = 0 ; i < sampleSize; i++)
         array[i] = U( generator );
-*/    
-
-
+  
+  */
+  algos::sorting_algos::quick_sort::pivotType = atoi(argc[2]);
     std::vector<unsigned int> array = load_file<unsigned int>(argc[1]);
+  //   std::vector<unsigned int> array = {3,7,1,2,4,5,6};//{4,2,6,3,7,1,5};
 
     // show initial array
     std::cout << "Initial array: "
