@@ -1,5 +1,6 @@
 #include "sort_algos_core.h"
 #include "algos_apps.h"
+#include "graph_algos.h"
 #include <random>
 #include <chrono>
 #include <fstream>
@@ -44,39 +45,12 @@ std::vector<T> load_file(const char* fileName) {
 }
 
 
-int main(int argv, char** argc){
-    /* 
-     * This is why I learned from the secure code programming: Never trust user input.
-     * Basically is to search for the good input format and reject everything else
-     */
-    /// Check if we have the good number of input arguments
-    /*if( argv != 5 ){ 
-        std::cerr << "Ivalid numer of input arguments" << std::endl;
-        help();
-        exit(-1);
-    }*/
- 
-    /// Checking for valid inputs
+int main(int argc, char** argv){
+
 
   /*
-    unsigned int sampleSize = (unsigned int) atoi(argc[3]);
-    int lowerLimit          = atoi(argc[1]);
-    int upperLimit          = atoi(argc[2]);
-
-    /// Initilalize uniform random distribution and array
-    std::default_random_engine generator
-    ( std::chrono::system_clock::now().time_since_epoch().count() );
-    std::uniform_int_distribution< int > U( lowerLimit, upperLimit );
-      
-    std::vector< unsigned int > array( sampleSize, 0 );
- 
-    /// Fill data 
-    for( unsigned int i = 0 ; i < sampleSize; i++)
-        array[i] = U( generator );
-  
-  */
   algos::sorting_algos::quick_sort::pivotType = atoi(argc[2]);
-    std::vector<unsigned int> array = load_file<unsigned int>(argc[1]);
+  std::vector<unsigned int> array = load_file<unsigned int>(argc[1]);
   //   std::vector<unsigned int> array = {3,7,1,2,4,5,6};//{4,2,6,3,7,1,5};
 
     // show initial array
@@ -97,11 +71,30 @@ int main(int argv, char** argc){
     std::cout << "N. of comparisons: " 
 	      << algos::sorting_algos::quick_sort::compCount
 	      << std::endl;
+  */
 
-    /*
-    std::cout << "The number of inversions is: "
-              << algos::apps::count_inversions<unsigned int>(array) 
-    	      << std::endl;
-    */
-    return EXIT_SUCCESS;
+  algos::graph_algos::AdjacencyList AdList =  algos::graph_algos::AdjacencyList::load_from_file(argv[1]);
+
+  //  std::cout << algos::graph_algos::sampling_no_replace(200,200 ) 
+  //	    << std::endl;
+
+  algos::graph_algos::AdjacencyList::MinCutTraits traits = AdList.compute_min_cut(atoi(argv[2]));
+
+  std::cout << " Min cut value: " 
+	    << traits.first
+	    << std::endl;
+
+  std::cout << " The cut is: [";
+ 
+  for (unsigned int i = 0; i < traits.second.size(); i++) 
+    std::cout << traits.second[i] 
+	      << ", ";
+  
+  std::cout << "]"
+	    << std::endl;
+
+
+
+
+  return EXIT_SUCCESS;
 }

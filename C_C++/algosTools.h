@@ -12,7 +12,7 @@
      * @brief Vector output format 
      */
     template< typename T >
-    std::ostream& operator << ( std::ostream& _os, const std::vector< T >& array ){
+    inline  std::ostream& operator << ( std::ostream& _os, const std::vector< T >& array ){
        _os << " ( ";
 
        std::ostream_iterator< T > os(_os, " ");
