@@ -10,6 +10,29 @@ namespace algos {
 
     std::vector<unsigned int> sampling_no_replace(int populationSize, int sampleSize);
 
+    class Node;
+    class Edge;
+
+    class Edge {
+    public:
+      Edge();
+      Edge(const Edge& e);
+      Edge(unsigned int _head, unsigned int _tail, unsigned int id, unsigned int weight = 0);
+      
+      Edge& operator=(const Edge& other);
+
+      unsigned int get_head()const;
+      unsigned int get_tail()const;
+      unsigned int get_index()const;
+      unsigned int get_weight() const;
+      
+    protected:
+      unsigned int head;
+      unsigned int tail;
+      unsigned int id;
+      unsigned int weight;
+    };
+
 
     class Node {
     public:
@@ -21,28 +44,19 @@ namespace algos {
 
       unsigned int get_index()const ;
 
+      void set_incident_edge(unsigned int it);
+
+      const std::set<unsigned int>& get_incident_edges() const;
+
     protected:
       unsigned int vID;
+
+      std::set<unsigned int> incidentEdges;
     };
 
     bool operator<(const Node& n1, const Node& n2);
 
-    class Edge {
-    public:
-      Edge();
-      Edge(const Edge& e);
-      Edge(unsigned int _head, unsigned int _tail, unsigned int id);
-      
-      Edge& operator=(const Edge& other);
 
-      unsigned int get_head()const;
-      unsigned int get_tail()const;
-      
-    protected:
-      unsigned int head;
-      unsigned int tail;
-      unsigned int id;
-    };
 
     class SuperNode {
     public:
@@ -58,16 +72,20 @@ namespace algos {
 
       void push(unsigned int vID);
 
-      void push(const std::set<unsigned int>& nodeSet);
+      void push(const Node& n);
+
+      void push(const std::set<Node>& nodeSet);
 
       bool find(unsigned int vID);
 
       unsigned int find(const Edge& e);
 
-      const std::set<unsigned int>& get_node_set()const;
+      unsigned int internal_size()const;
+
+      const std::set<Node>& get_node_set()const;
 
     protected:
-      std::set<unsigned int> nodes;
+      std::set<Node> nodes;
       unsigned int vID;
     };
 
@@ -90,14 +108,20 @@ namespace algos {
 
       bool find_edge(const Edge& _e);
 
-      static AdjacencyList load_from_file(const char* fileName);
+      std::set<Node>::iterator find_node(unsigned int nodeId)const;
 
-      const std::set<unsigned int>& get_vertices() const;
+      static AdjacencyList load_from_file(const char* fileName);
+      static AdjacencyList load_weighted_graph(const char* fileName);
+
+      const std::set<Node>& get_vertices() const;
 
       const std::vector<Edge>& get_edges() const;
 
 
       MinCutTraits compute_min_cut(unsigned int _times);
+
+
+      unsigned int dijkstra_shortest_path(unsigned int source);
       
 
     protected:
@@ -106,7 +130,7 @@ namespace algos {
 
       MinCutTraits compute_random_contraction();
 
-      std::set<unsigned int> vertices;
+      std::set<Node> vertices;
 
       std::vector<Edge> edges;
     };

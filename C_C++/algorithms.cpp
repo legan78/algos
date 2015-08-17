@@ -73,25 +73,10 @@ int main(int argc, char** argv){
 	      << std::endl;
   */
 
-  algos::graph_algos::AdjacencyList AdList =  algos::graph_algos::AdjacencyList::load_from_file(argv[1]);
+  algos::graph_algos::AdjacencyList AdList =  algos::graph_algos::AdjacencyList::load_weighted_graph(argv[1]);
 
-  //  std::cout << algos::graph_algos::sampling_no_replace(200,200 ) 
-  //	    << std::endl;
 
-  algos::graph_algos::AdjacencyList::MinCutTraits traits = AdList.compute_min_cut(atoi(argv[2]));
-
-  std::cout << " Min cut value: " 
-	    << traits.first
-	    << std::endl;
-
-  std::cout << " The cut is: [";
- 
-  for (unsigned int i = 0; i < traits.second.size(); i++) 
-    std::cout << traits.second[i] 
-	      << ", ";
-  
-  std::cout << "]"
-	    << std::endl;
+   std::cout << AdList.dijkstra_shortest_path(1);
 
 
 

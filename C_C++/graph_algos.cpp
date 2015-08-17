@@ -36,7 +36,8 @@ namespace algos {
     }
 
     Node::Node(const Node& n) 
-      : vID(n.vID) {
+      : vID(n.vID)
+      , incidentEdges(n.incidentEdges) {
     }
 
     Node::Node(unsigned int v)
@@ -45,6 +46,7 @@ namespace algos {
 
     Node& Node::operator=(const Node& n) {
       vID = n.vID;
+      incidentEdges = n.incidentEdges;
 
       return *this;
     }
@@ -55,6 +57,22 @@ namespace algos {
 
     unsigned int Node::get_index() const {
       return vID;
+    }
+
+    void Node::set_incident_edge(unsigned int it) {
+      incidentEdges.insert(it);
+	  std::cout << "Insident edge for node " 
+		    << get_index() 
+		    << ": " 
+		    << it
+		    << "  size: "
+		    << incidentEdges.size()
+		    << std::endl;
+    }
+
+
+    const std::set<unsigned int>& Node::get_incident_edges() const {
+      return incidentEdges;
     }
 
     SuperNode::SuperNode() {
@@ -85,18 +103,20 @@ namespace algos {
     }
 
     void SuperNode::push(unsigned int _vID) {
-      nodes.insert(_vID);
+      nodes.insert(Node(_vID));
     }
 
-    void SuperNode::push(const std::set<unsigned int>& nodeSet) {
+    void SuperNode::push(const std::set<Node>& nodeSet) {
       nodes.insert( nodeSet.begin(), nodeSet.end());
     }
     
     bool SuperNode::find(unsigned int _vID) {
-      std::set<unsigned int>::iterator it = std::find(nodes.begin(), nodes.end(), _vID);
 
-      if(it != nodes.end()) return true;
-      
+      std::set<Node>::iterator it = nodes.begin();
+
+      for (; it!= nodes.end(); it++)
+	if (it->get_index() == _vID) return true;
+
       return false;
     }
 
@@ -108,10 +128,19 @@ namespace algos {
     }
 
 
-    const std::set<unsigned int>& SuperNode::get_node_set()const {
+    const std::set<Node>& SuperNode::get_node_set()const {
       return nodes;
     }
 
+
+    unsigned int SuperNode::internal_size()const {
+      return nodes.size();
+    }
+
+
+    void SuperNode::push(const Node& n) {
+      nodes.insert(n);
+    }
 
     Edge::Edge() {
     }
@@ -119,19 +148,22 @@ namespace algos {
     Edge::Edge(const Edge& e)
       : head(e.head)
       , tail(e.tail)
-      , id(e.id) {
+      , id(e.id)
+      , weight(e.weight) {
     }
 
-    Edge::Edge(unsigned int _head, unsigned int _tail, unsigned int _id) 
+    Edge::Edge(unsigned int _head, unsigned int _tail, unsigned int _id, unsigned int _weight) 
       : head(_head)
       , tail(_tail)
-      , id(_id) {
+      , id(_id)
+      , weight(_weight) {
     }
 
     Edge& Edge::operator=(const Edge& other) {
       head = other.head;
       tail = other.tail;
       id = other.id;
+      weight = other.weight;
 
       return *this;
     }
@@ -144,6 +176,14 @@ namespace algos {
       return tail;
     }
 
+    unsigned int Edge::get_index() const {
+      return id;
+    }
+
+    unsigned int Edge::get_weight() const {
+      return weight;
+    }
+
     AdjacencyList::AdjacencyList() 
     { }
 
@@ -154,7 +194,7 @@ namespace algos {
     
     AdjacencyList::AdjacencyList(unsigned int nNodes) {
       for(unsigned int i = 0; i< nNodes; i++)
-	vertices.insert(i);
+	vertices.insert(Node(i));
     }
 
     AdjacencyList& AdjacencyList::operator=(const AdjacencyList& list) {
@@ -182,8 +222,8 @@ namespace algos {
 	  Edge e = Edge(nodeId, linkedId, edgeCounter++);
 
 	  if(!G.find_edge(e)) {
-	    G.edges.push_back(e);
-	    G.vertices.insert( linkedId );
+	    G.vertices.insert( Node(linkedId) );
+	    G.set_edge(e);
 	  }
 	}
       }
@@ -204,14 +244,56 @@ namespace algos {
       std::cout << "]"
 		<< std::endl;
 
-
 #endif
+
+      return G;
+    }
+
+
+
+    AdjacencyList AdjacencyList::load_weighted_graph(const char* fileName) {
+
+      std::ifstream inputFile(fileName);
+      std::string line, chunk;
+      unsigned int nodeId, linkedId, edgeCounter = 0, weight;
+
+      AdjacencyList G;
+
+      while (std::getline(inputFile, line)) {
+	std::stringstream ss;
+	ss.str(line.c_str());
+
+	ss >> nodeId;
+	G.vertices.insert(nodeId);
+
+	while ( ss >> chunk ) {
+	  sscanf(chunk.c_str(), "%d,%d", &linkedId, &weight);
+	  Edge e = Edge(linkedId, nodeId, edgeCounter++, weight);
+
+	  if(!G.find_edge(e)) {
+	    std::cout << e << " " << weight << std::endl;
+	    G.vertices.insert( Node(linkedId) );
+	    G.set_edge(e);
+	  }
+	}
+      }
 
       return G;
     }
 
     void AdjacencyList::set_edge(const Edge& _e) {
       edges.push_back(_e);
+
+      for ( std::set<Node>::iterator it = vertices.begin(); it!=vertices.end(); it++) {
+
+	if (_e.get_head() == it->get_index() ||
+	    _e.get_tail() == it->get_index() ) { 
+	  const Node& tmp = *it;
+	  Node& tmp2 = const_cast<Node&>(tmp);
+	  tmp2.set_incident_edge(edges.back().get_index());
+
+	}
+      }
     }
 
 
@@ -221,6 +303,21 @@ namespace algos {
 
       return false;
     }
+
+
+    std::set<Node>::iterator AdjacencyList::find_node(unsigned int nodeId)const {
+      std::set<Node>::iterator it = vertices.begin();
+
+      for (; it!=vertices.end(); it++)
+	if (nodeId == it->get_index())
+	  return it;
+
+      return it;
+    }
+
+
+
+
 
     SuperNode AdjacencyList::merge_super_nodes(const std::vector<std::list<SuperNode>::iterator>& ptrs) {
 
@@ -281,7 +378,7 @@ namespace algos {
 	for(; it!=auxVertices.end(); it++) {
 	  f = it->find(edges[randSamp[eIndex]]);
 
-	  std::vector<unsigned int> _tmp = std::vector<unsigned int>(it->get_node_set().begin(), it->get_node_set().end());
+	  std::vector<Node> _tmp = std::vector<Node>(it->get_node_set().begin(), it->get_node_set().end());
 #ifdef DEBUG_VERSION
 	  if (f==0) {
 	    std::cout << "Nodes of edge "
@@ -355,7 +452,7 @@ namespace algos {
       return outPut;
     }
 
-    const std::set<unsigned int>& AdjacencyList::get_vertices() const {
+    const std::set<Node>& AdjacencyList::get_vertices() const {
       return vertices;
     }
 
@@ -396,6 +493,63 @@ namespace algos {
 
       return index;
     } 
+
+    unsigned int AdjacencyList::dijkstra_shortest_path( unsigned int source ) {
+
+      std::vector<unsigned int> dijkstraPath;
+      std::vector<unsigned int> shortDist;
+
+      SuperNode X; // Set the node
+
+      shortDist.push_back(0);
+      X.push(*find_node(source));
+
+      unsigned int i = 1, select = 0, nodeIndex;
+
+
+      std::cout << X.internal_size() << " " << vertices.size() <<std::endl;
+      getchar();
+	
+      while(X.internal_size() != vertices.size()) {
+	unsigned int minCriteria = 1E100;
+	const std::set<Node>& xNodes = X.get_node_set();
+
+	std::set<Node>::iterator itn = xNodes.begin();
+	for(; itn!=xNodes.end(); itn++) {
+	  const std::set<unsigned int>& es = itn->get_incident_edges();
+
+	  std::cout << "Edges for node : "
+		    << itn->get_index()
+		    << " " 
+		    << std::vector<unsigned int>(es.begin(), es.end()) 
+		    << std::endl;
+
+	  getchar();
+
+	  std::set<unsigned int>::iterator ite = es.begin();
+	  for (; ite!=es.end(); ite++ ) {
+	    std ::cout << "looking for every edge"<< std::endl;
+	    if (edges[*ite].get_head() == itn->get_index() ||
+		X.find(edges[*ite].get_head())) continue;
+	    if (shortDist[i-1] + edges[*ite].get_weight() < minCriteria) {
+	      minCriteria = shortDist[i-1] + edges[*ite].get_weight();
+	      select = *ite;
+	      nodeIndex = edges[*ite].get_head();
+	    }
+	  }
+	}
+
+	X.push(*find_node(nodeIndex));
+	shortDist.push_back(minCriteria);
+	dijkstraPath.push_back(select);
+	
+	//	std::cout << minCriteria << ", ";
+      }// while
+
+      std::cout << shortDist << std::endl;
+
+      return shortDist[shortDist.size()-1];
+    }
 
 
 
