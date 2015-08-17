@@ -3,7 +3,7 @@
 
 #include "sort_algos.h"
 
-#define DEBUG_VERSION
+//#define DEBUG_VERSION
 
 namespace algos{
   namespace sorting_algos {
