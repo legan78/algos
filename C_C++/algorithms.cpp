@@ -73,10 +73,10 @@ int main(int argc, char** argv){
 	      << std::endl;
   */
 
-  algos::graph_algos::AdjacencyList AdList =  algos::graph_algos::AdjacencyList::load_weighted_graph(argv[1], false);
+  algos::graph_algos::AdjacencyList AdList =  algos::graph_algos::AdjacencyList::load_weighted_graph(argv[1], bool(atoi(argv[3])));
 
 
-   std::cout << AdList.dijkstra_shortest_path(1);
+  std::cout << AdList.dijkstra_shortest_path(atoi(argv[2]));
 
 
 

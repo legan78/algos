@@ -34,7 +34,6 @@ namespace algos {
 
     Node::Node() {
     }
-
     Node::Node(const Node& n) 
       : vID(n.vID)
       , incidentEdges(n.incidentEdges) {
@@ -512,15 +511,17 @@ namespace algos {
 	const std::set<Node>& xNodes = X.get_node_set();
 	std::set<Node>::iterator itn = xNodes.begin();
 
+	nodeHeadIndex = 0;
+
 	for(; itn!=xNodes.end(); itn++) {
 	  
 	  const std::set<unsigned int>& es = itn->get_incident_edges();
 
-	  std::cout << "Edges for node : "
+	  /*	  std::cout << "Edges for node : "
 		    << itn->get_index()
 		    << " " 
 		    << std::vector<unsigned int>(es.begin(), es.end()) 
-		    << std::endl;
+		    << std::endl;*/
 
 	  //getchar();
 
@@ -529,8 +530,6 @@ namespace algos {
 
 	    if ( edges[*ite].get_head() == itn->get_index() ||
 		 X.find(edges[*ite].get_head()) ) continue;
-
-	    std::cout << "checking" << std::endl;
 
 	    if (shortDist[itn->get_index()-1] + edges[*ite].get_weight() < minCriteria) {
 	      minCriteria = shortDist[itn->get_index()-1] + edges[*ite].get_weight();
@@ -545,20 +544,30 @@ namespace algos {
 	  }
 	}
 
-	X.push(*find_node(nodeHeadIndex));
-	shortDist[nodeHeadIndex-1] = minCriteria;
-	dijkstraPath.push_back(select);
+        
+	if (nodeHeadIndex != 0) {
+	  X.push(*find_node(nodeHeadIndex));
+	  shortDist[nodeHeadIndex-1] = minCriteria;
+	  dijkstraPath.push_back(select);
 	
-	std::cout << "Selecting node: " 
-		  << nodeHeadIndex 
-		  << " with length: "
-		  << shortDist[nodeHeadIndex-1]
-		  << std::endl;
+	  std::cout << "Selecting node: " 
+		    << nodeHeadIndex 
+		    << " with length: "
+		    << shortDist[nodeHeadIndex-1]
+		    << std::endl;
+	} else 
+	  std::cout << "Node index: " << nodeHeadIndex << std::endl;
+
 
       }// while
 
-      std::cout << shortDist << std::endl;
+      int indices[] = {6,36,58,81,98,114,132,164,187,196};
 
+      for (unsigned int i=0; i<sizeof(indices)/sizeof(int); i++) {
+	std::cout << shortDist[indices[i]] <<"," ;
+      }
+
+      std::cout << std::endl;
       return shortDist[shortDist.size()-1];
     }
 
