@@ -111,7 +111,7 @@ namespace algos {
       std::set<Node>::iterator find_node(unsigned int nodeId)const;
 
       static AdjacencyList load_from_file(const char* fileName);
-      static AdjacencyList load_weighted_graph(const char* fileName);
+      static AdjacencyList load_weighted_graph(const char* fileName, bool _offset = false);
 
       const std::set<Node>& get_vertices() const;
 

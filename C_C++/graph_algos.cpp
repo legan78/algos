@@ -61,13 +61,13 @@ namespace algos {
 
     void Node::set_incident_edge(unsigned int it) {
       incidentEdges.insert(it);
-	  std::cout << "Insident edge for node " 
+      /*	  std::cout << "Insident edge for node " 
 		    << get_index() 
 		    << ": " 
 		    << it
 		    << "  size: "
 		    << incidentEdges.size()
-		    << std::endl;
+		    << std::endl;*/
     }
 
 
@@ -251,11 +251,13 @@ namespace algos {
 
 
 
-    AdjacencyList AdjacencyList::load_weighted_graph(const char* fileName) {
+    AdjacencyList AdjacencyList::load_weighted_graph(const char* fileName, bool _offset) {
 
       std::ifstream inputFile(fileName);
       std::string line, chunk;
       unsigned int nodeId, linkedId, edgeCounter = 0, weight;
+
+      unsigned int offset = (_offset)?1:0;
 
       AdjacencyList G;
 
@@ -264,17 +266,17 @@ namespace algos {
 	ss.str(line.c_str());
 
 	ss >> nodeId;
-	G.vertices.insert(nodeId);
+	G.vertices.insert(nodeId+offset);
 
 	while ( ss >> chunk ) {
 	  sscanf(chunk.c_str(), "%d,%d", &linkedId, &weight);
-	  Edge e = Edge(linkedId, nodeId, edgeCounter++, weight);
+	  Edge e = Edge(linkedId+offset, nodeId+offset, edgeCounter++, weight);
 
-	  if(!G.find_edge(e)) {
+	  //if(!G.find_edge(e)) {
 	    std::cout << e << " " << weight << std::endl;
-	    G.vertices.insert( Node(linkedId) );
+	    G.vertices.insert( Node(linkedId+offset) );
 	    G.set_edge(e);
-	  }
+	    //}
 	}
       }
 
@@ -497,25 +499,21 @@ namespace algos {
     unsigned int AdjacencyList::dijkstra_shortest_path( unsigned int source ) {
 
       std::vector<unsigned int> dijkstraPath;
-      std::vector<unsigned int> shortDist;
+      std::vector<unsigned int> shortDist(vertices.size(), 0);
+      unsigned int select = 0, nodeHeadIndex;
 
       SuperNode X; // Set the node
 
-      shortDist.push_back(0);
       X.push(*find_node(source));
-
-      unsigned int i = 1, select = 0, nodeIndex;
-
-
-      std::cout << X.internal_size() << " " << vertices.size() <<std::endl;
-      getchar();
 	
       while(X.internal_size() != vertices.size()) {
 	unsigned int minCriteria = 1E100;
-	const std::set<Node>& xNodes = X.get_node_set();
 
+	const std::set<Node>& xNodes = X.get_node_set();
 	std::set<Node>::iterator itn = xNodes.begin();
+
 	for(; itn!=xNodes.end(); itn++) {
+	  
 	  const std::set<unsigned int>& es = itn->get_incident_edges();
 
 	  std::cout << "Edges for node : "
@@ -524,26 +522,39 @@ namespace algos {
 		    << std::vector<unsigned int>(es.begin(), es.end()) 
 		    << std::endl;
 
-	  getchar();
+	  //getchar();
 
 	  std::set<unsigned int>::iterator ite = es.begin();
 	  for (; ite!=es.end(); ite++ ) {
-	    std ::cout << "looking for every edge"<< std::endl;
-	    if (edges[*ite].get_head() == itn->get_index() ||
-		X.find(edges[*ite].get_head())) continue;
-	    if (shortDist[i-1] + edges[*ite].get_weight() < minCriteria) {
-	      minCriteria = shortDist[i-1] + edges[*ite].get_weight();
+
+	    if ( edges[*ite].get_head() == itn->get_index() ||
+		 X.find(edges[*ite].get_head()) ) continue;
+
+	    std::cout << "checking" << std::endl;
+
+	    if (shortDist[itn->get_index()-1] + edges[*ite].get_weight() < minCriteria) {
+	      minCriteria = shortDist[itn->get_index()-1] + edges[*ite].get_weight();
 	      select = *ite;
-	      nodeIndex = edges[*ite].get_head();
+	      nodeHeadIndex = edges[*ite].get_head();
+
+	      if(nodeHeadIndex == 0) {
+		std::cout << "Zeroooo [" << *ite << "] : " << edges[*ite] << std::endl;
+	      }
 	    }
+
 	  }
 	}
 
-	X.push(*find_node(nodeIndex));
-	shortDist.push_back(minCriteria);
+	X.push(*find_node(nodeHeadIndex));
+	shortDist[nodeHeadIndex-1] = minCriteria;
 	dijkstraPath.push_back(select);
 	
-	//	std::cout << minCriteria << ", ";
+	std::cout << "Selecting node: " 
+		  << nodeHeadIndex 
+		  << " with length: "
+		  << shortDist[nodeHeadIndex-1]
+		  << std::endl;
+
       }// while
 
       std::cout << shortDist << std::endl;
