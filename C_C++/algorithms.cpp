@@ -1,10 +1,12 @@
+
 #include "sort_algos_core.h"
 #include "algos_apps.h"
 #include "graph_algos.h"
 #include <random>
 #include <chrono>
 #include <fstream>
-  
+
+
 /// gilzhaiek@hotmail.com
  
 /// #define DEBUG_VERSION
@@ -44,7 +46,6 @@ std::vector<T> load_file(const char* fileName) {
 
 }
 
-
 int main(int argc, char** argv){
 
 
@@ -77,8 +78,6 @@ int main(int argc, char** argv){
 
 
   std::cout << AdList.dijkstra_shortest_path(atoi(argv[2]));
-
-
 
 
   return EXIT_SUCCESS;

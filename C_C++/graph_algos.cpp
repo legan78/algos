@@ -5,7 +5,9 @@
 
 //#define DEBUG_VERSION
 
-
+/**
+ * @brief Ostream operator for edges.
+ */
 std::ostream& operator << ( std::ostream& _os, const algos::graph_algos::Edge& e ) {
   _os << "("
       << e.get_tail()
@@ -16,7 +18,12 @@ std::ostream& operator << ( std::ostream& _os, const algos::graph_algos::Edge& e
   return _os;
 }
 
-
+/**
+ * @brief Comparing operator for edges.
+ * @param e1 First edge to be compared.
+ * @param e2 Second edge to be compared.
+ * @return True if edges are the same.
+ */
 bool operator==(const algos::graph_algos::Edge& e1, const algos::graph_algos::Edge& e2) {
   if( (e1.get_head() == e2.get_head() &&
        e1.get_tail() == e2.get_tail()) ||
@@ -31,18 +38,33 @@ namespace algos {
   namespace graph_algos {
 
 
-
+    /**
+     * @brief Constructor.
+     */
     Node::Node() {
     }
+
+    /**
+     * @brief Copy constructor.
+     * @param n Node to copy
+     */
     Node::Node(const Node& n) 
       : vID(n.vID)
       , incidentEdges(n.incidentEdges) {
     }
 
-    Node::Node(unsigned int v)
-      :vID(v) {
+    /**
+     * @brief Constructor by index id.
+     * @param id Index of node.
+     */
+    Node::Node(unsigned int id)
+      :vID(id) {
     }
 
+    /**
+     * @brief Assignation operator.
+     * @param n Node to copy.
+     */
     Node& Node::operator=(const Node& n) {
       vID = n.vID;
       incidentEdges = n.incidentEdges;
@@ -50,14 +72,28 @@ namespace algos {
       return *this;
     }
 
+    /**
+     * @brief Comparing operator for nodes.
+     * @param n1 First node.
+     * @param n2 Second node.
+     * @return True if n1 and n2 have same index.
+     */
     bool operator<(const Node& n1, const Node& n2) {
       return (n1.get_index() < n2.get_index());
     }
 
+    /**
+     * @brief Access to node index.
+     * @return Index value of node.
+     */
     unsigned int Node::get_index() const {
       return vID;
     }
 
+    /**
+     * @brief Add edge incidenting the node.
+     * @param it Index of edge.
+     */
     void Node::set_incident_edge(unsigned int it) {
       incidentEdges.insert(it);
       /*	  std::cout << "Insident edge for node " 
@@ -69,23 +105,41 @@ namespace algos {
 		    << std::endl;*/
     }
 
-
+    /**
+     * @brief Get the set of incident edges to the current node.
+     * @return Constant reference to the set of incident edges.
+     */
     const std::set<unsigned int>& Node::get_incident_edges() const {
       return incidentEdges;
     }
 
+    /**
+     * @brief Constructor.
+     */
     SuperNode::SuperNode() {
     }
     
+    /**
+     * @brief Copy constructor.
+     * @param sn Supernode to be copied.
+     */
     SuperNode::SuperNode(const SuperNode& sn)
       : vID(sn.vID)
       , nodes(sn.nodes) {
     }
 
+    /**
+     * @brief Constructor by supernode index.
+     */
     SuperNode::SuperNode(unsigned int v)
       : vID(v) {
     }
 
+    /**
+     * @brief Assignation operator.
+     * @param sn Node to be copied.
+     * @return Reference to this pointer.
+     */
     SuperNode& SuperNode::operator=(const SuperNode& sn) {
       vID = sn.vID;
       nodes = sn.nodes;
@@ -93,22 +147,43 @@ namespace algos {
       return *this;
     }
 
+    /**
+     * @brief Add node to the cluster.
+     * @param n Node to be added.
+     */
     bool operator<(const SuperNode& sn1, const SuperNode& sn2) {
       return (sn1.get_index() < sn2.get_index());
     }
 
+    /**
+     * @brief Get index of super node.
+     * @return Value of node index.
+     */
     unsigned int SuperNode::get_index()const {
       return vID;
     }
 
-    void SuperNode::push(unsigned int _vID) {
-      nodes.insert(Node(_vID));
+    /**
+     * @brief Add node to the cluster node.
+     * @param node_index Index of single node to be added.
+     */
+    void SuperNode::push(unsigned int node_index) {
+      nodes.insert(Node(node_index));
     }
 
+    /**
+     * @brief Add a set of nodes to the cluster node.
+     * @param nodeSet Set of nodes to be added to the cluster.
+     */
     void SuperNode::push(const std::set<Node>& nodeSet) {
       nodes.insert( nodeSet.begin(), nodeSet.end());
     }
-    
+
+    /**
+     * @brief Find node in the cluster node.
+     * @param vID Index of node to find.
+     * @return True if node was found in cluster.
+     */
     bool SuperNode::find(unsigned int _vID) {
 
       std::set<Node>::iterator it = nodes.begin();
@@ -119,6 +194,11 @@ namespace algos {
       return false;
     }
 
+    /**
+     * @brief Check if any of the nodes of a given edge appear in the cluster.
+     * @param e Edge that contains the node indices to be searched for.
+     * @return 2 if both nodes where found, 1 for one node and 0 for none.
+     */
     unsigned int SuperNode::find(const Edge& e) {
       unsigned int headF = (find(e.get_head()))?1:0;
       unsigned int tailF = (find(e.get_tail()))?1:0;
@@ -126,24 +206,40 @@ namespace algos {
       return headF + tailF;
     }
 
-
+    /**
+     * @brief Access to the node set of the cluster.
+     * @brief Constant reference to the node set in the cluster.
+     */
     const std::set<Node>& SuperNode::get_node_set()const {
       return nodes;
     }
 
-
+    /**
+     * @brief Access to the size of the current nodes in the cluster.
+     * @return Size of the node set of the cluster index.
+     */
     unsigned int SuperNode::internal_size()const {
       return nodes.size();
     }
 
-
+    /**
+     * @brief Add node to the cluster.
+     * @param n Node to be added.
+     */
     void SuperNode::push(const Node& n) {
       nodes.insert(n);
     }
 
+    /**
+     * @brief Constructor.
+     */
     Edge::Edge() {
     }
 
+    /**
+     * @brief Copy constructor.
+     * @param e Edge to copy.
+     */
     Edge::Edge(const Edge& e)
       : head(e.head)
       , tail(e.tail)
@@ -151,6 +247,13 @@ namespace algos {
       , weight(e.weight) {
     }
 
+    /**
+     * @brief Constructor by parameter specification.
+     * @param _head Node pointing arrow of the edge.
+     * @param _tail Node tailing arrow of the edge.
+     * @param id Id for the edge in the graph.
+     * @param weight Length of the edge.
+     */
     Edge::Edge(unsigned int _head, unsigned int _tail, unsigned int _id, unsigned int _weight) 
       : head(_head)
       , tail(_tail)
@@ -158,6 +261,10 @@ namespace algos {
       , weight(_weight) {
     }
 
+    /**
+     * @brief Asignation operator.
+     * @param other Length to copy. 
+     */
     Edge& Edge::operator=(const Edge& other) {
       head = other.head;
       tail = other.tail;
@@ -167,35 +274,67 @@ namespace algos {
       return *this;
     }
 
+    /**
+     * @brief Access to edge head pointing node index.
+     * @return Index value of head node.
+     */
     unsigned int Edge::get_head() const {
       return head;
     }
 
+    /**
+     * @brief Access to edge tail pointing node index.
+     * @return Index value of tail node.
+     */
     unsigned int Edge::get_tail() const {
       return tail;
     }
 
+    /**
+     * @brief Access to edge index.
+     * @return Index value of edge.
+     */
     unsigned int Edge::get_index() const {
       return id;
     }
 
+    /**
+     * @brief Access to edge weight.
+     * @return Length value of edge.
+     */
     unsigned int Edge::get_weight() const {
       return weight;
     }
 
+    /**
+     * @brief Constructor.
+     */
     AdjacencyList::AdjacencyList() 
     { }
 
+    /**
+     * @brief Copy constructor.
+     * @param list Adjacency list to be copied.
+     */
     AdjacencyList::AdjacencyList(const AdjacencyList& list)
       : vertices(list.vertices)
       , edges(list.edges) {
     }
     
+    /**
+     * @brief Constructor by number of nodes
+     * @param nNodes Number of nodes containing the graph.
+     */
     AdjacencyList::AdjacencyList(unsigned int nNodes) {
       for(unsigned int i = 0; i< nNodes; i++)
 	vertices.insert(Node(i));
     }
 
+    /**
+     * @brief Assignation operator.
+     * @param list Adjacency list to be copied.
+     * @return Reference to this.
+     */
     AdjacencyList& AdjacencyList::operator=(const AdjacencyList& list) {
       vertices = list.vertices;
       edges = list.edges;
@@ -203,6 +342,11 @@ namespace algos {
       return *this;
     }
 
+    /**
+     * @brief Load undirected graphs from file.
+     * @param fileName Name of the file to be loaded.
+     * @return Adjacency list representing the loaded graph.
+     */
     AdjacencyList AdjacencyList::load_from_file(const char* fileName) {
       std::ifstream inputFile(fileName);
       std::string line;
@@ -218,11 +362,12 @@ namespace algos {
 	G.vertices.insert(nodeId);
 
 	while ( ss >> linkedId ) {
-	  Edge e = Edge(nodeId, linkedId, edgeCounter++);
+	  Edge e = Edge(nodeId, linkedId, edgeCounter);
 
 	  if(!G.find_edge(e)) {
 	    G.vertices.insert( Node(linkedId) );
 	    G.set_edge(e);
+	    edgeCounter++;
 	  }
 	}
       }
@@ -242,14 +387,18 @@ namespace algos {
       }
       std::cout << "]"
 		<< std::endl;
-
 #endif
 
       return G;
     }
 
 
-
+    /**
+     * @brief Load weighted graphs from file.
+     * @param fileName Name of the file to be loaded.
+     * @param _offset Set to true if the nodes in the file start on 0. False for otherwise.
+     * @return Adjacency list representing the loaded graph.
+     */
     AdjacencyList AdjacencyList::load_weighted_graph(const char* fileName, bool _offset) {
 
       std::ifstream inputFile(fileName);
@@ -316,10 +465,11 @@ namespace algos {
       return it;
     }
 
-
-
-
-
+    /**
+     * @brief Merge supernodes into one single node.
+     * @param ptrs Vector of iterators of supernodes.
+     * @return Super node containing all nodes in the list of supernodes iterator.
+     */
     SuperNode AdjacencyList::merge_super_nodes(const std::vector<std::list<SuperNode>::iterator>& ptrs) {
 
       SuperNode sp;
@@ -331,7 +481,11 @@ namespace algos {
       return sp;
     }
 
-
+    /**
+     * @brief Computes min cut by random contraction.
+     * @param _times Number of times to execute the random contraction algorithm.
+     * @return Value of the cut and the edges in the cut.
+     */
     AdjacencyList::MinCutTraits AdjacencyList::compute_min_cut(unsigned int _times) {
 
       MinCutTraits outPut, it;
@@ -349,6 +503,10 @@ namespace algos {
       return outPut;
     }
 
+    /**
+     * @brief Runs the random contraction algorithm one time to find a min cut.
+     * @return Value of the cut and the edges in the cut.
+     */
     AdjacencyList::MinCutTraits AdjacencyList::compute_random_contraction() {
 
       std::list<SuperNode> auxVertices;
@@ -453,10 +611,18 @@ namespace algos {
       return outPut;
     }
 
+    /**
+     * @brief Access to the set of nodes in the graph.
+     * @return Constant reference to the set of nodes.
+     */
     const std::set<Node>& AdjacencyList::get_vertices() const {
       return vertices;
     }
 
+    /**
+     * @brief Access to the vector of edges in the graph.
+     * @return Constant reference to the vector of edges.
+     */
     const std::vector<Edge>& AdjacencyList::get_edges()const {
       return edges;
     }
@@ -495,6 +661,12 @@ namespace algos {
       return index;
     } 
 
+    /**
+     * @brief Find the shortest path to all the nodes starting from a given node using 
+     * the Dijkstras shortest path algorithm.
+     * @param source Source node index.
+     * @return 
+     */
     unsigned int AdjacencyList::dijkstra_shortest_path( unsigned int source ) {
 
       std::vector<unsigned int> dijkstraPath;
