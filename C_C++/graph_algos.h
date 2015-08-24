@@ -391,6 +391,106 @@ namespace algos {
       std::vector<Edge> edges;
     };
 
+//======================================================================
+//======================================================================
+
+    class Node_ {
+    public:
+      // Data for neighbor contains a pointer to the neigboring node 
+      // and a unsigned int for the weight of the edge joining the nodes
+      typedef std::pair<Node_*, unsigned int> Neighbor;
+
+      /**
+       * @brief Constructor.
+       */
+      Node_();
+
+      /**
+       * @brief Copy constructor.
+       * @param n Node to be copied.
+       */
+      Node_(const Node_& n);
+
+      /**
+       * @brief Asignation operator.
+       * @param n Node to be copied.
+       * @return Reference to this node.
+       */
+      Node_& operator=(const Node_& n);
+
+      /**
+       * @brief Set a new neigboring node to the list of adjacent nodes.
+       * Before adding, verifies if the neighboring node is already in the list
+       * @param n Node to be added to the neigboring list of nodes.
+       */
+      void set_neighbor(const Neighbor& n);
+
+      /**
+       * @brief Set a new neigbooring node to the list of adjacent nodes.
+       * Before adding, verifies if the neighboring node is already in the list.
+       * @param n Pointer to the node to be added to the neigboring list of nodes.
+       * @param weight Edge length linking to node n.
+       */
+      void set_neighbor(Node_* n, unsigned int weight = 0);
+
+      /**
+       * @brief Access to edge index.
+       * @return Index value of edge.
+       */
+      unsigned int get_index()const ;
+
+      /**
+       * @brief Get the set of neigbooring nodes.
+       * @return Constant reference to the set of incident edges.
+       */
+      const std::list<Neighbor>& get_neighborhood() const;
+
+    protected:
+      /*
+       * Id for the node
+       */
+      unsigned int id;
+
+      /*
+       * Adjacent nodes to this node.
+       */
+      std::list<Neighbor> neighborhood;
+    };
+
+
+    class AdjacencyList_ {
+    public:
+
+      /**
+       * @brief Constructor.
+       */
+      AdjacencyList_();
+
+      /**
+       * @brief Copy constructor.
+       * @param list Adjacency list to be copied.
+       */
+      AdjacencyList_(const AdjacencyList_& list);
+
+      /**
+       * @brief Assignation operator.
+       * @param List to be copied.
+       * @return Reference to this.
+       */
+      AdjacencyList_& operator=(const AdjacencyList_& list);
+
+
+      void set_edge();
+
+    protected:
+      
+      std::vector<Node_> vertices;
+      std::vector<Edge_> edges;
+
+
+    };
+
+
 
   }
 }

@@ -517,13 +517,7 @@ namespace algos {
 	for(; it!=auxVertices.end(); it++) {
 	  f = it->find(edges[randSamp[eIndex]]);
 
-<<<<<<< HEAD
-	  if (f==1) { // One node was found
-=======
-	  std::vector<Node> _tmp = std::vector<Node>(it->get_node_set().begin(), it->get_node_set().end());
-
-	  if (f==1) {
->>>>>>> a59576ea3425a1cbd987ac83d0f1b91637eafb24
+	  if (f==1) { // One one was found
 	    std::list<SuperNode>::iterator _it = it;
 	    ptrs.push_back(_it);
 	    delEdgesCount += (!deletedEdges[randSamp[eIndex]])?1:0;
@@ -548,10 +542,7 @@ namespace algos {
 	eIndex++;
       }
 
-<<<<<<< HEAD
       // Delete all self edges
-=======
->>>>>>> a59576ea3425a1cbd987ac83d0f1b91637eafb24
       for (unsigned int i = 0; i < deletedEdges.size(); i++) {
 	for (std::list<SuperNode>::iterator it = auxVertices.begin(); 
 	     it!=auxVertices.end(); 
@@ -673,10 +664,6 @@ namespace algos {
 	  X.push(*find_node(nodeHeadIndex));
 	  shortDist[nodeHeadIndex-1] = minCriteria;
 	  dijkstraPath.push_back(select);
-<<<<<<< HEAD
-=======
-	
->>>>>>> a59576ea3425a1cbd987ac83d0f1b91637eafb24
 	}
 
       }// while
@@ -691,6 +678,84 @@ namespace algos {
 
       return shortDist[shortDist.size()-1];
     }
+
+
+//======================================================================
+//======================================================================
+
+
+    /**
+     * @brief Constructor.
+     */
+    Node_::Node_()
+      : id(0) {
+    }
+
+    /**
+     * @brief Copy constructor.
+     * @param n Node to be copied.
+     */
+    Node_::Node_(const Node_& n) 
+      : id(n.id)
+      , neighborhood(n.neighborhood) {
+    }
+
+    /**
+     * @brief Asignation operator.
+     * @param n Node to be copied.
+     * @return Reference to this node.
+     */
+    Node_& Node_::operator=(const Node_& n) {
+      id = n.id;
+      neighborhood = n.neighborhood;
+
+      return *this;
+    }
+
+    /**
+     * @brief Set a new neigboring node to the list of adjacent nodes.
+     * Before adding, verifies if the neighboring node is already in the list
+     * @param n Node to be added to the neigboring list of nodes.
+     */
+    void Node_::set_neighbor(const Node_::Neighbor& n) {
+      std::list<Neighbor>::iterator it = neighborhood.begin();
+
+      for (; it != neighborhood.end(); it++) {
+	if (it->first->get_index() == n.first->get_index())
+	  return;
+      }
+
+      neighborhood.push_back(n);
+    }
+
+    /**
+     * @brief Set a new neigbooring node to the list of adjacent nodes.
+     * Before adding, verifies if the neighboring node is already in the list
+     * @param n Pointer to the node to be added to the neigboring list of nodes.
+     * @param weight Edge length linking to node n.
+     */
+    void Node_::set_neighbor(Node_* n, unsigned int weight) {
+      Neighbor _n(n, weight);
+
+      set_neighbor(_n);
+    }
+
+    /**
+     * @brief Access to edge index.
+     * @return Index value of edge.
+     */
+    unsigned int Node_::get_index()const {
+      return id;
+    }
+
+    /**
+     * @brief Get the set of neigbooring nodes.
+     * @return Constant reference to the set of incident edges.
+     */
+    const std::list<Node_::Neighbor>& Node_::get_neighborhood() const {
+      return neighborhood;
+    }
+
 
 
 
