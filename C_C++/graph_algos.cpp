@@ -372,23 +372,6 @@ namespace algos {
 	}
       }
 
-#ifdef DEBUG_VERSION
-      std::cout << "AdjacencyList with " 
-		<< G.vertices.size()
-		<< " vertices and "
-		<< G.edges.size()
-		<< " edges."
-		<< std::endl;
-
-      std::cout << "[";
-      for (unsigned int i = 0; i < G.edges.size(); i++) {
-	std::cout << G.edges[i]
-		  << ", ";
-      }
-      std::cout << "]"
-		<< std::endl;
-#endif
-
       return G;
     }
 
@@ -420,11 +403,10 @@ namespace algos {
 	  sscanf(chunk.c_str(), "%d,%d", &linkedId, &weight);
 	  Edge e = Edge(linkedId+offset, nodeId+offset, edgeCounter++, weight);
 
-	  //if(!G.find_edge(e)) {
-	    std::cout << e << " " << weight << std::endl;
+	  if(!G.find_edge(e)) {
 	    G.vertices.insert( Node(linkedId+offset) );
 	    G.set_edge(e);
-	    //}
+	  }
 	}
       }
 
@@ -515,10 +497,6 @@ namespace algos {
 
       MinCutTraits outPut;
 
-#ifdef DEBUG_VERSION
-      std::cout << randSamp << std::endl;
-#endif
-
       unsigned int delEdgesCount = 0;
 
       for(unsigned int i=1; i<=vertices.size(); i++) {
@@ -538,21 +516,6 @@ namespace algos {
 	  f = it->find(edges[randSamp[eIndex]]);
 
 	  std::vector<Node> _tmp = std::vector<Node>(it->get_node_set().begin(), it->get_node_set().end());
-#ifdef DEBUG_VERSION
-	  if (f==0) {
-	    std::cout << "Nodes of edge "
-		      << edges[randSamp[eIndex]]
-		      << " not found in set "
-		      << _tmp
-		      << std::endl;
-	  } else {
-	    std::cout << "Nodes of edge "
-		      << edges[randSamp[eIndex]]
-		      << " found in set "
-		      << _tmp
-		      << std::endl;
-	  }
-#endif
 
 	  if (f==1) {
 	    std::list<SuperNode>::iterator _it = it;
@@ -574,23 +537,8 @@ namespace algos {
 	  auxVertices.push_back(sn);
 	}
 
-#ifdef DEBUG_VERSION
-	getchar();
-#endif
 	eIndex++;
       }
-
-
-#ifdef DEBUG_VERSION
-
-      std::cout << "The super nodes are: ";
-      for (std::list<SuperNode>::iterator it = auxVertices.begin(); it!=auxVertices.end(); it++) {
-	std::cout << std::vector<unsigned int>(it->get_node_set().begin(), it->get_node_set().end())
-		  << " ";
-      }
-      std::cout << std::endl;
-
-#endif
 
       for (unsigned int i = 0; i < deletedEdges.size(); i++) {
 	for (std::list<SuperNode>::iterator it = auxVertices.begin(); it!=auxVertices.end(); it++) {
@@ -689,14 +637,6 @@ namespace algos {
 	  
 	  const std::set<unsigned int>& es = itn->get_incident_edges();
 
-	  /*	  std::cout << "Edges for node : "
-		    << itn->get_index()
-		    << " " 
-		    << std::vector<unsigned int>(es.begin(), es.end()) 
-		    << std::endl;*/
-
-	  //getchar();
-
 	  std::set<unsigned int>::iterator ite = es.begin();
 	  for (; ite!=es.end(); ite++ ) {
 
@@ -722,14 +662,7 @@ namespace algos {
 	  shortDist[nodeHeadIndex-1] = minCriteria;
 	  dijkstraPath.push_back(select);
 	
-	  std::cout << "Selecting node: " 
-		    << nodeHeadIndex 
-		    << " with length: "
-		    << shortDist[nodeHeadIndex-1]
-		    << std::endl;
-	} else 
-	  std::cout << "Node index: " << nodeHeadIndex << std::endl;
-
+	}
 
       }// while
 
@@ -740,6 +673,7 @@ namespace algos {
       }
 
       std::cout << std::endl;
+
       return shortDist[shortDist.size()-1];
     }
 
