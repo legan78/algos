@@ -92,6 +92,16 @@ namespace algos {
       unsigned int weight;
     };
 
+    class _node_ {
+    public:
+      virtual unsigned int get_index() = 0;
+
+    protected:
+      unsigned int vID;
+    };
+
+
+
     /**
      * @brief Node class
      */

@@ -404,7 +404,6 @@ namespace algos {
 	  Edge e = Edge(linkedId+offset, nodeId+offset, edgeCounter++, weight);
 
 	  if(!G.find_edge(e)) {
-	    std::cout << e << " " << weight << std::endl;
 	    G.vertices.insert( Node(linkedId+offset) );
 	    G.set_edge(e);
 	  }
@@ -518,7 +517,13 @@ namespace algos {
 	for(; it!=auxVertices.end(); it++) {
 	  f = it->find(edges[randSamp[eIndex]]);
 
+<<<<<<< HEAD
 	  if (f==1) { // One node was found
+=======
+	  std::vector<Node> _tmp = std::vector<Node>(it->get_node_set().begin(), it->get_node_set().end());
+
+	  if (f==1) {
+>>>>>>> a59576ea3425a1cbd987ac83d0f1b91637eafb24
 	    std::list<SuperNode>::iterator _it = it;
 	    ptrs.push_back(_it);
 	    delEdgesCount += (!deletedEdges[randSamp[eIndex]])?1:0;
@@ -543,7 +548,10 @@ namespace algos {
 	eIndex++;
       }
 
+<<<<<<< HEAD
       // Delete all self edges
+=======
+>>>>>>> a59576ea3425a1cbd987ac83d0f1b91637eafb24
       for (unsigned int i = 0; i < deletedEdges.size(); i++) {
 	for (std::list<SuperNode>::iterator it = auxVertices.begin(); 
 	     it!=auxVertices.end(); 
@@ -665,6 +673,10 @@ namespace algos {
 	  X.push(*find_node(nodeHeadIndex));
 	  shortDist[nodeHeadIndex-1] = minCriteria;
 	  dijkstraPath.push_back(select);
+<<<<<<< HEAD
+=======
+	
+>>>>>>> a59576ea3425a1cbd987ac83d0f1b91637eafb24
 	}
 
       }// while
