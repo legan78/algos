@@ -756,6 +756,104 @@ namespace algos {
       return neighborhood;
     }
 
+    /**
+     * @brief Constructor.
+     */
+    AdjacencyList_::AdjacencyList_() {
+    }
+
+    /**
+     * @brief Copy constructor.
+     * @param list Adjacency list to be copied.
+     */
+    AdjacencyList_::AdjacencyList_(const AdjacencyList_& list)
+      : vertices(list.vertices)
+      , edges(list.edges) {
+    }
+
+    /**
+     * @brief Assignation operator.
+     * @param List to be copied.
+     * @return Reference to this.
+     */
+    AdjacencyList_& AdjacencyList_::operator=(const AdjacencyList_& list) {
+      vertices = list.vertices;
+      edges = list.edges;
+
+      return *this;
+    }
+
+    /**                                                           
+     * @brief Load undirected graphs from file.           
+     * @param fileName Name of the file to be loaded.
+     * @return Adjacency list representing the loaded graph.
+     */
+    AdjacencyList_ AdjacencyList_::load_from_file(const char* fileName) {
+
+      std::ifstream inputFile(fileName);
+      std::string line;
+      unsigned int nodeId, linkedId, edgeCounter = 0;
+
+      AdjacencyList_ G;
+
+      while (std::getline(inputFile, line)) {
+	std::stringstream ss;
+	ss.str(line.c_str());
+
+	ss >> nodeId;
+	G.vertices.insert(nodeId);
+
+	while ( ss >> linkedId ) {
+
+	  if (!G.find_edge(nodeId, linkedId)) {
+	    G.set_edge(nodeId, linkedId);
+	  }
+	}
+      }
+
+      return G;
+    }
+
+    /**
+     * @brief Load weighted graphs from file.
+     * @param fileName Name of the file to be loaded.
+     * @param _offset Set to true if the nodes in the file start on 0. False otherwise.
+     * @return Adjacency list representing the loaded graph.
+     */
+    AdjacencyList_ AdjacencyList_::load_weighted_graph(const char* fileName, bool _ offset) {
+    }
+
+    /**
+     * @brief Set an edge between two vertices with some length.
+     * @param n1 Id of the first edge.
+     * @param n2 Id of the second edge.
+     * @param weight Length of the edge between the nodes.
+     */
+    void AdjacencyList_::set_edge(unsigned int n1, unsigned int n2, unsigned int weight) {
+      
+    }
+
+
+    /**
+     * @brief Search if there exist an edge between two given nodes.
+     * @param n1 Id of node.
+     * @param nw Id of node.
+     * @return True exist an edge between the two given nodes.
+     */
+    bool AdjacencyList_::find_edge(unsigned int n1, unsigned int n2){
+      const std::list<Node_*>& tmp = vertices[n1].get_neighborhood(),
+      std::list<Node_*>::iterator it = tmp.begin();
+
+      for (;it!=tmp.end(); it++)
+	if ( (*it)->get_index() == n2 ) return true;
+
+      return false;
+    }
+
+    protected:
+      
+      std::vector<Node_> vertices;
+      std::vector<Edge_> edges;
 
 
 

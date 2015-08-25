@@ -457,30 +457,55 @@ namespace algos {
       std::list<Neighbor> neighborhood;
     };
 
+    /**
+     * @brief Constructor.
+     */
+    AdjacencyList_();
 
-    class AdjacencyList_ {
-    public:
+    /**
+     * @brief Copy constructor.
+     * @param list Adjacency list to be copied.
+     */
+    AdjacencyList_(const AdjacencyList_& list);
+
+    /**
+     * @brief Assignation operator.
+     * @param List to be copied.
+     * @return Reference to this.
+     */
+    AdjacencyList_& operator=(const AdjacencyList_& list);
+
+    /**                                                           
+     * @brief Load undirected graphs from file.           
+     * @param fileName Name of the file to be loaded.
+     * @return Adjacency list representing the loaded graph.
+     */
+    static AdjacencyList_ load_from_file(const char* fileName);
 
       /**
-       * @brief Constructor.
+       * @brief Load weighted graphs from file.
+       * @param fileName Name of the file to be loaded.
+       * @param _offset Set to true if the nodes in the file start on 0. False otherwise.
+       * @return Adjacency list representing the loaded graph.
        */
-      AdjacencyList_();
+      static AdjacencyList_ load_weighted_graph(const char* fileName, bool _ offset);
 
       /**
-       * @brief Copy constructor.
-       * @param list Adjacency list to be copied.
+       * @brief Set an edge between two vertices with some length.
+       * @param n1 Id of the first edge. (tail)
+       * @param n2 Id of the second edge. (head)
+       * @param weight Length of the edge between the nodes.
        */
-      AdjacencyList_(const AdjacencyList_& list);
+      void set_edge(unsigned int n1, unsigned int n2, unsigned int weight = 0);
+
 
       /**
-       * @brief Assignation operator.
-       * @param List to be copied.
-       * @return Reference to this.
+       * @brief Search if there exist an edge between two given nodes.
+       * @param n1 Id of node.
+       * @param nw Id of node.
+       * @return True exist an edge between the two given nodes.
        */
-      AdjacencyList_& operator=(const AdjacencyList_& list);
-
-
-      void set_edge();
+      bool find_edge(unsigned int n1, unsigned int n2);
 
     protected:
       

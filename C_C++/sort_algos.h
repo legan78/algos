@@ -61,9 +61,9 @@ namespace algos{
      * current list into two chunks, to reach the base case costs log_{2}(n).
      * The trick is then to compute the merging step in linear time.
      * @COMPLEXITIES:
-     * @WORST_CASE:     O( nlog2(n) )
-     * @BEST_CASE:      O( nlog2(n) )
-     * @AVERAGE_CASE:   O( nlog2(n) )                
+     * @WORST_CASE:     O( nlog(n) )
+     * @BEST_CASE:      O( nlog(n) )
+     * @AVERAGE_CASE:   O( nlog(n) )                
      */
      class merge_sort {
        public:
@@ -97,8 +97,23 @@ namespace algos{
                           unsigned int middle, unsigned int end );
     };
 
+     /**
+      * This an implementation of the quick sort algorithm. The algorithm uses
+      * the divide and conquer paradigm to solve the problem. The implementation
+      * uses the sthocastic tecnique to choose the pivot between the 15 and 75 
+      * percent of the data.
+      * @COMPLEXITIES 
+      * @WORSTCASE O(n²)
+      * @BESTCASE O(nlog(n)) in the average case.
+      */     
      class quick_sort {
-       public:
+     public:
+
+       /**
+	* @brief Sorts data using the quick sort algorithm.
+	* @param _array Array of data to be sorted in place.
+	* @param order Flag to sort either to increse or decrease.
+	*/
        template<typename T>
 	 static void sort(std::vector<T>& _array, int order = SORT_ALGOS_INCREASING);
        
@@ -106,7 +121,7 @@ namespace algos{
 
        static int pivotType;
 
-       protected:
+     protected:
 
        quick_sort();
        quick_sort(const quick_sort& other);
@@ -132,7 +147,6 @@ namespace algos{
 	 static unsigned int median_of_three(const std::vector<T>& _array
 					     ,unsigned int l
 					     ,unsigned int r);
-
      };
 
   }
