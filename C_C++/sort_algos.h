@@ -12,6 +12,7 @@ namespace algos{
     };
           
 
+
     /** 
      * This is a simple implementation of the insertion sort algorithm.
      * This algorithm works as follows: Imagine that you have a hand of cards on
