@@ -1,0 +1,23 @@
+@startuml
+
+skinparam classAttributeIconSize 0
+
+
+class sorting_algos <<utility>> {
+    {static}+quick_sort(in first:iterator, in last:iterator)
+    {static}+merge_sort(in first:iterator, in last:iterator)
+    {static}+insertion_sort(in first:iterator, in last:iterator)
+
+}
+
+class quick_sort_imp {
+   +sort(in first:iterator, in last:iterator)
+   +pivot_partition(in first:iterator, in last:iterator)
+}
+
+
+
+
+hide sorting_algos attributes
+
+@enduml
