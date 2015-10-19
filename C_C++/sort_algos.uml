@@ -11,13 +11,20 @@ class sorting_algos <<utility>> {
 }
 
 class quick_sort_imp {
+   {static}+ PIVOT_TYPE : int
+
    +sort(in first:iterator, in last:iterator)
-   +pivot_partition(in first:iterator, in last:iterator)
+   -pivot_partition(in first:iterator, in last:iterator)
+   -get_pivot(in first:iterator, in last:iterator)
+   -median_of_three(in first:iterator, in last:iterator)
+}
+
+class merge_sort_imp {
+    +sort(in first:iterator, in last:iterator)
+    -split(in first: iterator, in last:iterator)
+    -merge(in first: iterator, in last:iterator)
 }
 
 
-
-
 hide sorting_algos attributes
-
 @enduml
