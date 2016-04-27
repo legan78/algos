@@ -3,31 +3,32 @@
 #include <queue>
 #include <random>
 #include <chrono>
+#include <fstream>
 
 
 template<typename _Tp>
-class node_ {
+class vertex_ {
 public:
   _Tp key;
   int parent;
-  int nodeIdx;
+  int idx;
 
-  node_(int idx=-1, int p =-1, _Tp _key = std::numeric_limits<_Tp>::max())
-  :nodeIdx(idx)
+  vertex_(int _idx=-1, int p =-1, _Tp _key = std::numeric_limits<_Tp>::max())
+  :idx(_idx)
   ,parent(p)
   ,key(_key) 
   {  }
 
-  node_(const node_& n) {
+  vertex_(const vertex_& n) {
     key = n.key;
     parent = n.parent;
-    nodeIdx = n.nodeIdx;
+    idx = n.idx;
   }
 
-  node_& operator=(const node_& n) {
+  vertex_& operator=(const vertex_& n) {
     key = n.key;
     parent = n.parent;
-    nodeIdx = n.nodeIdx;
+    idx = n.idx;
 
     return *this;
   }
@@ -57,65 +58,132 @@ public:
 };
 
 typedef edge_<int, double> edge;
-typedef node_<double> node;
+typedef vertex_<double> vertex;
+typedef vertex* vertex_ptr;
 
-bool operator<(const node& n1, const node& n2) {
-  return n1.nodeIdx < n2.nodeIdx;
+struct vertex_dptr{
+  vertex_dptr(const vertex_ptr& ptr) {
+    key = ptr->key;
+  }
+  double key;
+};
+
+
+bool operator<(const vertex& n1, const vertex& n2) {
+  return n1.idx < n2.idx;
 }
 
-bool operator>(const node& n1, const node& n2) {
+bool operator>(const vertex_dptr& n1, const vertex_dptr& n2) {
   return n1.key > n2.key;
+}
+
+std::ostream& operator<<(std::ostream& os, const vertex& vx) {
+  os << "Index: " << vx.idx
+     << " parent: " << vx.parent
+     << " key: " << vx.key
+     << std::endl;
+
+  return os;
 }
 
 
 typedef std::map<int, std::vector<edge> > edge_adjacency_list;
-typedef std::map<int, std::vector<node> > vertex_adjavency_list;
-typedef std::vector<node> node_list;
+typedef std::map<int, std::vector<int> > vertex_adjacency_list;
+typedef std::vector<vertex> vertex_list;
 
-typedef std::priority_queue<node, 
-          std::vector<node>, 
-            std::greater<node> > min_priority_queue;
+typedef std::priority_queue<vertex_ptr, 
+          std::vector<vertex_ptr>, 
+            std::greater<vertex_dptr> > min_priority_queue;
+
+
+void fillAdjList(const char* file, edge_adjacency_list& eadj, vertex_adjacency_list& vAdj);
 
 
 int main(int argc, char** argv) {
 
   edge_adjacency_list eAdj;
-  vertex_adjavency_list nAdj;
-  vertex_list nodes;
+  vertex_adjacency_list nAdj;
 
-  fillAdjList(eAdj);
+  fillAdjList(argv[1],eAdj, nAdj);
+
+  min_priority_queue Q;
+  std::vector<bool> isInQueue(nAdj.size(), true);
+  vertex_list vertices(nAdj.size());
+
+  vertices[5].key = 0;
+
+  for(size_t i=0; i<vertices.size(); i++) {
+    vertices[i].idx = i;
+    Q.push(&vertices[i]);
+  }
+
+  std::cout <<"Bulding minimum spanning tree" << std::endl;
+
+  while(Q.size()) {
+    vertex_ptr u = Q.top();
+    Q.pop();
+
+    isInQueue[u->idx] = false;
+
+    std::vector<int> adjList = nAdj[u->idx];
+    std::vector<edge> incident = eAdj[u->idx];
+
+    for(size_t i=0; i< adjList.size(); i++) {
+      double w = std::numeric_limits<double>::max();
+      int v = adjList[i];
+
+      for(size_t j=0; j<incident.size(); j++)
+        if(incident[j].head == v) w = incident[j].weight;
+
+      std::cout << u->idx 
+               << " with " << v  
+               << " weight " << w 
+               << " key of v " << vertices[v].key
+               << std::endl;
+      std::cout <<"Is in Q " << isInQueue[v] << " weight less? " << (w < vertices[v].key) << std::endl;
+
+
+      if(isInQueue[v] && w < vertices[v].key) {
+        vertices[v].parent = u->idx;
+        vertices[v].key = w;
+      }
+
+    }
+  }
+
+  for(size_t i=0; i< vertices.size(); i++)
+    std::cout << vertices[i].idx << " with parent " << vertices[i].parent << std::endl;
 
 
 
   return EXIT_SUCCESS;
 }
 
-void fillAdjList(edge_adjacency_list& eadj) {
-  std::vector<edge> adj0, adj1, adj2, adj3, adj4, adj5, adj6, adj7;
+void fillAdjList(const char* fileName,
+                 edge_adjacency_list& eAdj, 
+                 vertex_adjacency_list& vAdj) { 
 
-  adj0.push_back(edge(0,1,4));
-  adj0.push_back(edge(0,7,8));
-  adj1.push_back(edge(1,2,8));
-  adj1.push_back(edge(1,7,11));
-  adj2.push_back(edge(2,3,7));
-  adj2.push_back(edge(2,5,4));
-  adj2.push_back(edge(2,8,2));
-  adj3.push_back(edge(3,4,9));
-  adj3.push_back(edge(3,5,14));
-  adj4.push_back(edge(4,5,10));
-  adj5.push_back(edge(5,6,2));
-  adj6.push_back(edge(6,8,6));
-  adj6.push_back(edge(6,7,1));
-  adj7.push_back(edge(7,8,7));
+  std::ifstream file(fileName);
 
-  eadj[0] = adj0;
-  eadj[1] = adj1;
-  eadj[2] = adj2;
-  eadj[3] = adj3;
-  eadj[4] = adj4;
-  eadj[5] = adj5;
-  eadj[6] = adj6;
-  eadj[7] = adj7;
+  size_t nVertex=0, nEdges=0;
+  int tailIdx=0, headIdx=0;
+  double weight = 0.0;
+  file >> nVertex >> nEdges;
 
+  std::cout << "G = (V,E) with " <<nVertex << " and " << nEdges << std::endl;
+
+  for(size_t i=0; i<nEdges; i++) {
+    file >> tailIdx >> headIdx >> weight;
+    eAdj[tailIdx].push_back(edge(tailIdx, headIdx, weight));
+    eAdj[headIdx].push_back(edge(headIdx, tailIdx, weight));
+
+    vAdj[tailIdx].push_back(headIdx);
+    vAdj[headIdx].push_back(tailIdx);
+
+    std::cout << "Tail " << tailIdx << " head: " << headIdx << " weight: " << weight <<std::endl;
+  }
+
+
+  file.close();
 }
 
