@@ -6,10 +6,11 @@
 #include <fstream>
 
 
-template<typename _Tp>
+template<typename _Tp, typename _Up = char>
 class vertex_ {
 public:
   _Tp key;
+  _Up label;
   int parent;
   int idx;
 
@@ -111,9 +112,11 @@ int main(int argc, char** argv) {
   vertex_list vertices(nAdj.size());
 
   vertices[5].key = 0;
+  char c = 'a';
 
   for(size_t i=0; i<vertices.size(); i++) {
     vertices[i].idx = i;
+    vertices[i].label = c++;
     Q.push(&vertices[i]);
   }
 
@@ -140,19 +143,25 @@ int main(int argc, char** argv) {
                << " weight " << w 
                << " key of v " << vertices[v].key
                << std::endl;
-      std::cout <<"Is in Q " << isInQueue[v] << " weight less? " << (w < vertices[v].key) << std::endl;
-
+      std::cout << "Is in Q " << isInQueue[v] 
+                << " weight less? " << (w < vertices[v].key) 
+                << std::endl;
+  
+      getchar();
 
       if(isInQueue[v] && w < vertices[v].key) {
         vertices[v].parent = u->idx;
         vertices[v].key = w;
       }
-
     }
   }
 
-  for(size_t i=0; i< vertices.size(); i++)
-    std::cout << vertices[i].idx << " with parent " << vertices[i].parent << std::endl;
+  for(size_t i=0; i< vertices.size(); i++) {
+    int pLabel = vertices[i].parent;
+    std::cout << vertices[i].label 
+              << " with parent " 
+              << ((pLabel>=0)?char(vertices[pLabel].label):' ') << std::endl;
+  }
 
 
 
