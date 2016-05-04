@@ -100,6 +100,21 @@ typedef std::priority_queue<vertex_ptr,
 void fillAdjList(const char* file, edge_adjacency_list& eadj, vertex_adjacency_list& vAdj);
 
 
+
+
+template<typename _Tp>
+class BinaryHeap {
+public:
+  BinaryHeap();
+
+
+protected:
+  
+};
+
+
+
+
 int main(int argc, char** argv) {
 
   edge_adjacency_list eAdj;
@@ -154,6 +169,12 @@ int main(int argc, char** argv) {
         vertices[v].key = w;
       }
     }
+
+    while(Q.size()) Q.pop();
+
+    for(size_t i=0; i<vertices.size(); i++)
+      if(isInQueue[i])
+        Q.push(&vertices[i]);
   }
 
   for(size_t i=0; i< vertices.size(); i++) {
