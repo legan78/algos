@@ -2,9 +2,25 @@
 #define BINARYSEARCHTREE_H
 
 namespace algos {
+	template<typename _Tp>
+	class Container {
+	public:
+		class Iterator {
+			friend Container;
+		public:
+			virtual Iterator& operator++() = 0;
+			virtual _Tp& operator*() = 0;
+			virtual _Tp* operator->() = 0;
+		protected:
+		};
+	protected:
+
+		_Tp* __begin;
+	};
+
 	namespace Struct {
 		template <typename _Tp>
-		class BST {
+		class BST : public algos::Container<_Tp> {
 		public:
 
 			class Node {
