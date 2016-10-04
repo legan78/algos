@@ -4,6 +4,12 @@
 #include <random>
 #include <chrono>
 
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+
+cv::Mat scene = cv::Mat::zeros(500, 500, CV_8UC3);
+
 template<size_t d = 1, typename type=float>
 class Vector {
 public:
@@ -116,8 +122,14 @@ protected:
 		for (size_t i = 0; i < objs.size(); i++) {
 			dst = distanceToPlane<>(objs[i], plane);
 
-			if (dst > 0) leftObjs.push_back(objs[i]);
-			else rightObjs.push_back(objs[i]);
+			if (dst > 0) { 
+				leftObjs.push_back(objs[i]);
+				cv::circle(scene, cv::Point(objs[i][0], objs[i][1]), 5, cv::Scalar(0,0,255), -1);
+			}
+			else { 
+				rightObjs.push_back(objs[i]);
+				cv::circle(scene, cv::Point(objs[i][0], objs[i][1]), 5, cv::Scalar(255,0,0), -1);
+			}
 		}
 
 		printf("Size of left %lu  size of right %lu\n", leftObjs.size(), rightObjs.size());
@@ -129,20 +141,36 @@ protected:
 	}
 
 	Vector<dim+1> computeSplitingPlane(Node* node) {
-		float prevLenght = -std::numeric_limits<float>::max(), length = 0.0f;
+		float prevLength = -std::numeric_limits<float>::max(), length = 0.0f;
 		size_t maxDim = 0;
 
 		for (size_t i = 0; i < dim; i++) {
 			length = node->boundaries[i][1] - node->boundaries[i][0];
-			if (length > prevLenght) {
-				prevLenght = length;
+			if (length > prevLength) {
+				prevLength = length;
 				maxDim = i; 
 			}
 		}
 
+		printf("The spliting axis is %lu\n", maxDim);
+
 		Vector<dim + 1> plane;
 		plane[maxDim] = 1.0;
-		plane[dim] = -prevLenght / 2.0f;
+		plane[dim] = -prevLength / 2.0f;
+
+
+		printf("The plane is %f %f %f\n", plane[0], plane[1], plane[2]);
+
+		cv::Point2f p1, p2;
+
+		p1.x = (plane[0] > 0.0f)? prevLength/2.0f:0.0;
+		p1.y = (plane[1] > 0.0f)? prevLength/2.0f:0.0;
+
+		p2.x = (plane[0] > 0.0f)? prevLength/2.0f:500.0f;
+		p2.y = (plane[1] > 0.0f)? prevLength/2.0f:500.0f;
+
+		cv::line(scene, p1, p2, cv::Scalar::all(255), 2);
+                
 
 		return plane;
 	}
@@ -158,21 +186,25 @@ int main(int argc, char** argv) {
 	std::default_random_engine generator
 	(std::chrono::system_clock::now().time_since_epoch().count());
 
-	std::uniform_real_distribution<float> d(0, 10);
+	std::uniform_real_distribution<float> d(0, 500);
 	std::vector<Vector<dim> > objs;
 	Vector<dim> v;
 
-	for (size_t i = 0; i < 10; i++) {
+
+	for (size_t i = 0; i < 100; i++) {
 		for (size_t j = 0; j < dim; j++) {
 			v[j] = d(generator);
 		}
 		objs.push_back(v);
+
+		cv::circle(scene, cv::Point(v[0], v[1]), 5, cv::Scalar::all(255), -1);
 	}
 
 	BSP<dim> bsp(objs);
 
 
-	getchar();
+	cv::imshow("Scene", scene);
+	cv::waitKey();
 
 	return 0;
 }

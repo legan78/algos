@@ -30,7 +30,7 @@ namespace algos {
 		template <typename _Tp>
 		BST<_Tp>::BST()
 			: root(NULL) {
-			__begin = NULL;
+			//__begin = NULL;
 		}
 
 		template <typename _Tp>
