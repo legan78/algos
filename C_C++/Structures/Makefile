@@ -17,7 +17,7 @@ OPENCV_LIBS=-lopencv_core \
 main:	main.o
 	$(CXX) $(CFLAGS) main.o $(OPENCV_LIBS) -o main.out
 
-main.o: main.cpp BinarySearchTree_core.h BinarySearchTree.h
+main.o: main.cpp BinarySearchTree_core.h BinarySearchTree.h BinarySpacePartition.h
 	$(CXX) $(CFLAGS) -c main.cpp
 
 clean:
