@@ -30,8 +30,10 @@ int main(int argc, char** argv) {
 		cv::circle(scene, cv::Point(v[0], v[1]), 5, cv::Scalar::all(255), -1);
 	}
 
-	BSP<dim> bsp(objs);
+	BSP<dim> bsp;
+	BSP<dim, Vector<dim> >::OBJECT_THRESHOLD = atoi(argv[2]);
 
+	bsp.onInit(objs);
 
 	cv::imshow("Scene", scene);
 	cv::waitKey();
