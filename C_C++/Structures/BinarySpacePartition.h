@@ -1,15 +1,17 @@
 #ifndef BINARYSPACEPARTITION_H
 #define BINARYSPACEPARTITION_H
 
+//#define BOUNDARIES_FROM_OBJECTS
+#define SPLIT_AXIS_MAX
+#define OPENCV_VISUALIZATION
+
+
+#ifdef OPENCV_VISUALIZATION
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
-
 cv::Mat scene = cv::Mat::zeros(500, 500, CV_8UC3);
-
-//#define BOUNDARIES_FROM_OBJECTS
-#define SPLIT_AXIS_MAX
-
+#endif
 
 template<size_t d = 1, typename type=float>
 class Vector {
@@ -88,15 +90,24 @@ public:
 			}
 		}
 
+		size_t getSplitingDimension() {
+			return splitingDimension;
+		}
+
+	  Vector<dim> getSplitingPoint() {
+			return splitingPoint;
+		}
+
 	protected:
 		Node* left;
 		Node* right;
 		Node* parent;
 
 		std::vector<_Tp> objs;
-
+		Vector<dim+1> splitingPlane;
+    Vector<dim> splitingPoint;
+    size_t cuttingDimension;
 		float boundaries[dim][2]; // min and max limits
-		float key;
 	};
 
 	/**
@@ -250,21 +261,29 @@ protected:
 		float dst = 0.0f;
 		std::vector<_Tp> leftObjs, rightObjs;
 		Vector<dim+1> plane = computeSplitingPlane(node, maxDim);
+    node->splitingPlane = plane;
+    node->cuttingDimension = maxDim;
 
 		// Asigna los objetos a la division correspondiente
 		for (size_t i = 0; i < objs.size(); i++) {
 			dst = distanceToPlane(objs[i], plane);
-			if (dst > 0) { 
+			if (dst > 0.0f) { 
 				rightObjs.push_back(objs[i]);
-				cv::circle(scene, cv::Point(objs[i][0], objs[i][1]), 5, cv::Scalar(0,0,255), -1);
 			}	else {
 				leftObjs.push_back(objs[i]);
-				cv::circle(scene, cv::Point(objs[i][0], objs[i][1]), 5, cv::Scalar(255,0,0), -1);
 			}
+
+#ifdef OPENCV_VISUALIZATION
+			cv::Scalar color = (dst>0.0f)? cv::Scalar(0,0,255):cv::Scalar(255,0,0);
+			cv::circle(scene, cv::Point(objs[i][0], objs[i][1]), 5, color, -1);
+#endif
+
 		}
 
 		printf("Size of left %lu  size of right %lu\n", leftObjs.size(), rightObjs.size());
+#ifdef OPENCV_VISUALIZATION
 		drawLine(node, plane);
+#endif
 
 		// Existen objetos que asignar a las nuevas divisiones
 		if(leftObjs.size()) node->left = new Node;
@@ -305,6 +324,7 @@ protected:
 		return plane;
 	}
 
+#ifdef OPENCV_VISUALIZATION
   void drawLine(Node* node, Vector<3>& plane) {
 		cv::Point2f p1, p2;
 
@@ -319,6 +339,7 @@ protected:
 		cv::imshow("Scene", scene);
 //    cv::waitKey();
   }
+#endif
 
 	/**
    * @brief Libera memoria del nodo y todos sus descendientes. La 
