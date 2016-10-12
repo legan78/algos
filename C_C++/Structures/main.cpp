@@ -8,7 +8,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
-#include "BinarySpacePartition.h"
+#include "BinarySpacePartition_core.h"
 
 int main(int argc, char** argv) {
 	const size_t dim=2;
@@ -30,10 +30,10 @@ int main(int argc, char** argv) {
 		cv::circle(scene, cv::Point(v[0], v[1]), 5, cv::Scalar::all(255), -1);
 	}
 
-	BSP<dim> bsp;
-	BSP<dim, Vector<dim> >::OBJECT_THRESHOLD = atoi(argv[2]);
+	BSPTree<Vector<dim>, dim> bsp(objs);
+	BSPTree<Vector<dim>, dim>::OBJECT_THRESHOLD = atoi(argv[2]);
 
-	bsp.onInit(objs);
+//	bsp.onInit(objs);
 
 	cv::imshow("Scene", scene);
 	cv::waitKey();
