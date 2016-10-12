@@ -4,8 +4,8 @@
 #include "BinarySpacePartition.h"
 
 
-template<typename ObjType, size_t SpaceDim, size_t PlaneDim>
-size_t BSPTree<ObjType, SpaceDim, PlaneDim>::OBJECT_THRESHOLD = 1;
+template<typename ObjType, size_t SpaceDim, size_t PlaneDim, typename Extractor>
+size_t BSPTree<ObjType, SpaceDim, PlaneDim, Extractor>::OBJECT_THRESHOLD = 1;
 
 /**
  * @brief Clase que implementa el binary space partition para proporcionar
@@ -13,8 +13,8 @@ size_t BSPTree<ObjType, SpaceDim, PlaneDim>::OBJECT_THRESHOLD = 1;
  * particiones estan alineadas a los ejes y las dimensiones son obtenidas
  * mediante los limites del bounding box de los objetos en cada particion.
  */
-template<typename ObjType, size_t SpaceDim, size_t PlaneDim>
-	BSPTree<ObjType, SpaceDim, PlaneDim>::Node::Node()
+template<typename ObjType, size_t SpaceDim, size_t PlaneDim, typename Extractor>
+	BSPTree<ObjType, SpaceDim, PlaneDim, Extractor>::Node::Node()
 		:left(NULL),
 		right(NULL) {
 			for (size_t i = 0; i < SpaceDim; i++) {
@@ -23,26 +23,26 @@ template<typename ObjType, size_t SpaceDim, size_t PlaneDim>
 			}
 		}
 
-template<typename ObjType, size_t SpaceDim, size_t PlaneDim>
-	size_t BSPTree<ObjType, SpaceDim, PlaneDim>::Node::getSplitingAxisIdx() {
+template<typename ObjType, size_t SpaceDim, size_t PlaneDim, typename Extractor>
+	size_t BSPTree<ObjType, SpaceDim, PlaneDim, Extractor>::Node::getSplitingAxisIdx() {
 			return splitingAxisIdx;
 	}
 
-template<typename ObjType, size_t SpaceDim, size_t PlaneDim>
-	Vector<SpaceDim> BSPTree<ObjType, SpaceDim, PlaneDim>::Node::getSplitingPoint() {
+template<typename ObjType, size_t SpaceDim, size_t PlaneDim, typename Extractor>
+	Vector<SpaceDim> BSPTree<ObjType, SpaceDim, PlaneDim, Extractor>::Node::getSplitingPoint() {
 		return splitingPoint;
 	}
 
-template<typename ObjType, size_t SpaceDim, size_t PlaneDim>
-	Vector<PlaneDim> BSPTree<ObjType, SpaceDim, PlaneDim>::Node::getSplitingPlane() {
+template<typename ObjType, size_t SpaceDim, size_t PlaneDim, typename Extractor>
+	Vector<PlaneDim> BSPTree<ObjType, SpaceDim, PlaneDim, Extractor>::Node::getSplitingPlane() {
 		return splitingPlane;
 	}
 
 	/**
    * @brief Constructor por default.
 	 */
-template<typename ObjType, size_t SpaceDim, size_t PlaneDim>
-	BSPTree<ObjType, SpaceDim, PlaneDim>::BSPTree(const std::vector<ObjType>& objs) 
+template<typename ObjType, size_t SpaceDim, size_t PlaneDim, typename Extractor>
+	BSPTree<ObjType, SpaceDim, PlaneDim, Extractor>::BSPTree(const std::vector<ObjType>& objs) 
 	: root(NULL) {
 		onInit(objs);
 	}
@@ -50,8 +50,8 @@ template<typename ObjType, size_t SpaceDim, size_t PlaneDim>
 	/**
    * @brief Destructor.
    */
-template<typename ObjType, size_t SpaceDim, size_t PlaneDim>
-	BSPTree<ObjType, SpaceDim, PlaneDim>::~BSPTree() {
+template<typename ObjType, size_t SpaceDim, size_t PlaneDim, typename Extractor>
+	BSPTree<ObjType, SpaceDim, PlaneDim, Extractor>::~BSPTree() {
 		release(root);
 	}
 
@@ -59,8 +59,8 @@ template<typename ObjType, size_t SpaceDim, size_t PlaneDim>
    * @brief Inicializador mediante los objetos en la scena.
    * @param objs Objectos en la escena que se particionara.
    */
-template<typename ObjType, size_t SpaceDim, size_t PlaneDim>
-	void BSPTree<ObjType, SpaceDim, PlaneDim>::onInit(const std::vector<ObjType>& objs) {
+template<typename ObjType, size_t SpaceDim, size_t PlaneDim, typename Extractor>
+	void BSPTree<ObjType, SpaceDim, PlaneDim, Extractor>::onInit(const std::vector<ObjType>& objs) {
 		root = new Node;
 		size_t maxAxisIdx = 0;
 
@@ -94,8 +94,8 @@ template<typename ObjType, size_t SpaceDim, size_t PlaneDim>
    * @param objs Contenedor de los objetos que contiene la rejilla.
    * @return Indice del eje de maxima extension.
 	 */
-template<typename ObjType, size_t SpaceDim, size_t PlaneDim>
-  size_t BSPTree<ObjType, SpaceDim, PlaneDim>::getAxisOfMaxLength(Node* node, const std::vector<ObjType>& objs) {
+template<typename ObjType, size_t SpaceDim, size_t PlaneDim, typename Extractor>
+  size_t BSPTree<ObjType, SpaceDim, PlaneDim, Extractor>::getAxisOfMaxLength(Node* node, const std::vector<ObjType>& objs) {
 		float prevLength = -std::numeric_limits<float>::max(), length = 0.0f;
 		size_t maxAxisIdx = 0;
 
@@ -119,12 +119,13 @@ template<typename ObjType, size_t SpaceDim, size_t PlaneDim>
    * @param node Nodo que representa la rejilla.
    * @param objs Objetos que contiene la rejilla.
    */
-template<typename ObjType, size_t SpaceDim, size_t PlaneDim>
-	void BSPTree<ObjType, SpaceDim, PlaneDim>::computeSpaceBoundaries(Node* node, const std::vector<ObjType>& objs) {
+template<typename ObjType, size_t SpaceDim, size_t PlaneDim, typename Extractor>
+	void BSPTree<ObjType, SpaceDim, PlaneDim, Extractor>::computeSpaceBoundaries(Node* node, const std::vector<ObjType>& objs) {
 		Vector<SpaceDim> maxs, mins;
 
 		for (size_t i = 0; i < objs.size(); i++) {
-			objs[i]->getBoundingBoxLimits(mins, maxs);
+			bextractor(objs[i], mins, maxs);
+//			objs[i]->getBoundingBoxLimits(mins, maxs);
 			for (size_t j = 0; j < SpaceDim; j++) {
 				if (mins[j] < node->boundaries[j][0]) node->boundaries[j][0] = mins[j];
 				if (maxs[j] > node->boundaries[j][1]) node->boundaries[j][1] = maxs[j];
@@ -140,8 +141,8 @@ template<typename ObjType, size_t SpaceDim, size_t PlaneDim>
    * @param node Nodo padre.
    * @param maxDim Indice del eje sobre el cual se dividira.
    */
-template<typename ObjType, size_t SpaceDim, size_t PlaneDim>
-	void BSPTree<ObjType, SpaceDim, PlaneDim>::computeSpaceBoundaries(Node* node, size_t maxAxisIdx) {
+template<typename ObjType, size_t SpaceDim, size_t PlaneDim, typename Extractor>
+	void BSPTree<ObjType, SpaceDim, PlaneDim, Extractor>::computeSpaceBoundaries(Node* node, size_t maxAxisIdx) {
 		float length = 0.0f;
 		Node* left = node->left;
     Node* right = node->right;
@@ -176,8 +177,8 @@ template<typename ObjType, size_t SpaceDim, size_t PlaneDim>
    * @param objs Objetos que se insertaran en la rejilla o sus divisiones.
    * @return true si la condicion de paro se ha alcanzado, false de otro modo.
    */
-template<typename ObjType, size_t SpaceDim, size_t PlaneDim>
-  bool BSPTree<ObjType, SpaceDim, PlaneDim>::meetStopCriteria(Node* node, const std::vector<ObjType>& objs) {
+template<typename ObjType, size_t SpaceDim, size_t PlaneDim, typename Extractor>
+  bool BSPTree<ObjType, SpaceDim, PlaneDim, Extractor>::meetStopCriteria(Node* node, const std::vector<ObjType>& objs) {
 
 		if (node == NULL || objs.size() == 0) return true;
 		else if (objs.size() <= OBJECT_THRESHOLD) {
@@ -200,8 +201,8 @@ template<typename ObjType, size_t SpaceDim, size_t PlaneDim>
    * @param objs Objetos a repartir en las divisiones de la rejilla.
    * @param maxDim Indice del eje sobre el cual se dividira la rejilla.
    */
-template<typename ObjType, size_t SpaceDim, size_t PlaneDim>
-	void BSPTree<ObjType, SpaceDim, PlaneDim>::splitNode(Node* node, const std::vector<ObjType>& objs, size_t maxAxisIdx) {
+template<typename ObjType, size_t SpaceDim, size_t PlaneDim, typename Extractor>
+	void BSPTree<ObjType, SpaceDim, PlaneDim, Extractor>::splitNode(Node* node, const std::vector<ObjType>& objs, size_t maxAxisIdx) {
 		if(meetStopCriteria(node, objs)) return;
 
 #ifdef BOUNDARIES_FROM_OBJECTS
@@ -215,20 +216,20 @@ template<typename ObjType, size_t SpaceDim, size_t PlaneDim>
 
 		// Asigna los objetos a la division correspondiente
 		for (size_t i = 0; i < objs.size(); i++) {
-			dst = distanceToPlane(objs[i], node->splitingPlane);
+			dst = distanceToPlane(*objs[i], node->splitingPlane);
 
 			if (dst > 0.0f) rightObjs.push_back(objs[i]);
 			else leftObjs.push_back(objs[i]);
 
 #ifdef OPENCV_VISUALIZATION
 			cv::Scalar color = (dst>0.0f)? cv::Scalar(0,0,255):cv::Scalar(255,0,0);
-			cv::circle(scene, cv::Point(objs[i][0], objs[i][1]), 5, color, -1);
+			cv::circle(scene, cv::Point((*objs[i])[0], (*objs[i])[1]), 5, color, -1);
 #endif
 
 		}
 
 #ifdef OPENCV_VISUALIZATION
-		printf("Size of left %lu  size of right %lu\n", leftObjs.size(), rightObjs.size());
+//		printf("Size of left %lu  size of right %lu\n", leftObjs.size(), rightObjs.size());
 		drawLine(node, node->splitingPlane);
 #endif
 
@@ -243,7 +244,7 @@ template<typename ObjType, size_t SpaceDim, size_t PlaneDim>
 #ifdef SPLIT_AXIS_MAX
 		size_t _maxDim = getAxisOfMaxLength(node, objs);
 #else
-    size_t _maxDim = (int(maxDim+1) % int(dim) == 0)? 0: maxDim+1;
+    size_t _maxDim = (int(maxAxisIdx+1) % int(SpaceDim) == 0)? 0: maxAxisIdx+1;
 #endif
 
 		splitNode(node->left, leftObjs, _maxDim);
@@ -258,23 +259,23 @@ template<typename ObjType, size_t SpaceDim, size_t PlaneDim>
    * @param maxDim Indice del eje que el plano generado dividira perpendicularmente.
    * @return Contenedor de los coeficientes del plano.
    */
-template<typename ObjType, size_t SpaceDim, size_t PlaneDim>
-	Vector<PlaneDim> BSPTree<ObjType, SpaceDim, PlaneDim>::computeSplitingPlane(Node* node, size_t maxAxisIdx) {  // Axis aligned planes
+template<typename ObjType, size_t SpaceDim, size_t PlaneDim, typename Extractor>
+	Vector<PlaneDim> BSPTree<ObjType, SpaceDim, PlaneDim, Extractor>::computeSplitingPlane(Node* node, size_t maxAxisIdx) {  // Axis aligned planes
 		float length =  node->boundaries[maxAxisIdx][1] - node->boundaries[maxAxisIdx][0];
-		printf("The spliting axis is %lu\n", maxAxisIdx);
+//		printf("The spliting axis is %lu\n", maxAxisIdx);
 
 		Vector<PlaneDim> plane;
 		plane[maxAxisIdx] = 1.0;
 		plane[SpaceDim] = -length / 2.0f - node->boundaries[maxAxisIdx][0] ;
 
-		printf("The plane is %f %f %f\n", plane[0], plane[1], plane[2]);
+//		printf("The plane is %f %f %f\n", plane[0], plane[1], plane[2]);
 
 		return plane;
 	}
 
 #ifdef OPENCV_VISUALIZATION
-template<typename ObjType, size_t SpaceDim, size_t PlaneDim>
-  void BSPTree<ObjType, SpaceDim, PlaneDim>::drawLine(Node* node, Vector<3>& plane) {
+template<typename ObjType, size_t SpaceDim, size_t PlaneDim, typename Extractor>
+  void BSPTree<ObjType, SpaceDim, PlaneDim, Extractor>::drawLine(Node* node, Vector<3>& plane) {
 		cv::Point2f p1, p2;
 
 		p1.x = (plane[0] > 0.0f)? -plane[2]:node->boundaries[0][0];
@@ -294,8 +295,8 @@ template<typename ObjType, size_t SpaceDim, size_t PlaneDim>
    * @brief Libera memoria del nodo y todos sus descendientes. La 
    * liberacion de memoria esta dada mediante el corrimiento post orden.
    */
-template<typename ObjType, size_t SpaceDim, size_t PlaneDim>
-	void BSPTree<ObjType, SpaceDim, PlaneDim>::release(Node* node) {
+template<typename ObjType, size_t SpaceDim, size_t PlaneDim, typename Extractor>
+	void BSPTree<ObjType, SpaceDim, PlaneDim, Extractor>::release(Node* node) {
 		if(node == NULL) return;
 
 		release(node->left);

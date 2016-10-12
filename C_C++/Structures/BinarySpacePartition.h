@@ -27,6 +27,14 @@ float distanceToPlane(const Vector<dim>& point, const Vector<p>& plane) {
 	return eval + plane[dim];
 }
 
+template<typename ObjType>
+class BoundaryExtractor {
+public:
+  void operator()(const ObjType& obj, Vector<2>& min, Vector<2>& max) { 
+		obj->getBoundingBoxLimits(min, max);       
+ 	}
+};
+
 /**
  * @brief Clase que implementa el binary space partition para proporcionar
  * una jerarquia a los objetos que estan en la escena. Actualmente las
@@ -35,7 +43,8 @@ float distanceToPlane(const Vector<dim>& point, const Vector<p>& plane) {
  */
 template<typename ObjType, 
 				 size_t SpaceDim=3, 
-				 size_t PlaneDim=SpaceDim+1>
+				 size_t PlaneDim=SpaceDim+1,
+         typename BExtractor=BoundaryExtractor<ObjType> >
 class BSPTree {
 	static const size_t planeDim;
 public:
@@ -76,6 +85,10 @@ public:
    * @brief Destructor.
    */
 	~BSPTree();
+
+	 void fillNonEmptyPartition() {
+		paintPartition(root);
+		}
 
 
 protected:
@@ -150,6 +163,22 @@ protected:
 
 #ifdef OPENCV_VISUALIZATION
   void drawLine(Node* node, Vector<3>& plane);
+
+  void paintPartition(Node* n) {
+		if(!n) return;
+		static size_t count=0;
+
+		if(!n->left && !n->right) {
+			printf("Painint nodes: %lu\n", ++count);
+			cv::Point2f p1, p2;
+      p1 = cv::Point2f(n->boundaries[0][0], n->boundaries[1][0]);
+      p2 = cv::Point2f(n->boundaries[0][1], n->boundaries[1][1]);
+			cv::rectangle(scene, p1, p2,cv::Scalar::all(255), -1);	
+		} else {
+    	if(n->left) paintPartition(n->left);
+			if(n->right) paintPartition(n->right);
+		}
+	}
 #endif
 
 	/**
@@ -159,6 +188,7 @@ protected:
 	void release(Node* node);
 
 	Node* root; // Nodo raiz de la particion jerarquica
+  BExtractor bextractor;
 };
 
 #endif
